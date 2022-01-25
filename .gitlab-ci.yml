@@ -1,0 +1,12 @@
+image: node:latest
+
+# Build
+test:
+  stage: test
+  script:
+    - npm install -g flow-bin
+    - npm install
+    - npm run-script build-test
+    - npm test
+stages:
+  - test
