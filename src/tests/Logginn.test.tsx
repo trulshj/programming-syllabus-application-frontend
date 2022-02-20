@@ -1,9 +1,8 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import LoggInn from "./LoggInn";
+import Login from "../Comoponents/Login/Login";
 
 test("Simple verification of successful render of Logginn component", () => {
-    render(<LoggInn />);
+    render(<Login />);
     const element = screen.getByText("Passord");
     expect(element).toBeInTheDocument();
 });

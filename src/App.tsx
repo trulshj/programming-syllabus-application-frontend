@@ -5,7 +5,7 @@ import MainSection from "./Comoponents/MainPage/MainSection";
 import ArticlesList from "./Comoponents/Articles/ArticlesList";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import ArticleDetails from "./Comoponents/Articles/ArticleDetails";
-import LoggInn from "./Comoponents/LogInn//LoggInn";
+import Login from "./Comoponents/Login/Login";
 import Registration from "./Comoponents/Registration/Registration";
 import RegisteredUserMeny from "./Comoponents/Meny/RegisteredUserMeny";
 import NewArticle from "./Comoponents/Articles/NewArticle";
@@ -37,7 +37,7 @@ const App: React.FC = () => {
                             path="/articlelist/:id"
                             component={ArticleDetails}
                         />
-                        <Route path="/logginn" component={LoggInn} />
+                        <Route path="/logginn" component={Login} />
                         <Route path="/Registration" component={Registration} />
                         <Route
                             path="/usermeny"

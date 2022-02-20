@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardColumns, Container, Button } from "react-bootstrap";
-import { Article, fetchArticles, fetchArticlesByUser } from "../../Api";
+import { Article } from "../../types/Article";
 import { Link } from "react-router-dom";
 import ntnu from "../../ntnu.jpg";
 import "./ArticlesList.css";
+import {
+    fetchArticles,
+    fetchArticlesByUser,
+    searchArticles,
+} from "../../api/article.service";
 
 const ArticlesList = ({ match }) => {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -34,13 +39,12 @@ const ArticlesList = ({ match }) => {
             let newArticles;
             // deciding the type of articles
             if (window.location.pathname === "/articlelist/myarticles") {
-                //@ts-ignore
                 newArticles = await fetchArticlesByUser(
-                    localStorage.getItem("userId")
+                    localStorage.getItem("userId") || ""
                 );
             } else if (window.location.pathname.startsWith("/search/")) {
                 //searching for articles
-                newArticles = await fetchArticles(match.params.id);
+                newArticles = await searchArticles(match.params.id);
             } else {
                 //regular article list view
                 newArticles = await fetchArticles();
@@ -59,14 +63,12 @@ const ArticlesList = ({ match }) => {
                             ? articles.map((article, key) => (
                                   <Card className="ArticlesList" key={key}>
                                       {
-                                          // @ts-ignore
                                           <Card.Img
                                               variant={"top"}
                                               src={
                                                   article?.images["0"]
                                                       ? "https://localhost:8080/api/file/" +
-                                                        article.images["0"]
-                                                            .file_id
+                                                        article.images["0"].id
                                                       : ntnu
                                               }
                                               alt={
@@ -105,7 +107,7 @@ const ArticlesList = ({ match }) => {
                                               Sist oppdatert{" "}
                                               {getTimeDiff(
                                                   new Date(
-                                                      article.article_change_date
+                                                      article?.article_change_date as string
                                                   )
                                               )}
                                           </small>

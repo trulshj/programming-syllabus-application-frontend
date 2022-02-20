@@ -1,6 +1,5 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import Registration from "./Registration";
+import Registration from "../Comoponents/Registration/Registration";
 
 test("Simple verification of successful render of registraion component", () => {
     render(<Registration />);

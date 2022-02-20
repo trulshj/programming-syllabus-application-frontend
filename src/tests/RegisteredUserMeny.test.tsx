@@ -1,6 +1,5 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import RegisteredUserMeny from "./RegisteredUserMeny";
+import RegisteredUserMeny from "../Comoponents/Meny/RegisteredUserMeny";
 
 test("Simple verification of successful render of Meny component", () => {
     render(<RegisteredUserMeny />);

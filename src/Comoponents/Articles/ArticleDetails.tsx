@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Article, fetchArticle } from "../../Api";
+import { useState, useEffect } from "react";
+import { Article } from "../../types/Article";
 import { Container, Col, Row, Image, ListGroup } from "react-bootstrap";
 import "./ArticleDetails.css";
 import ntnu from "../../ntnu.jpg";
+import { fetchArticle } from "../../api/article.service";
 
 export default function ArticleDetails({ match }) {
     const fileAPI = "https://localhost:8080/api/file/";
@@ -12,22 +13,23 @@ export default function ArticleDetails({ match }) {
         article_description: "",
         publications_date: "string",
         article_change_date: "string",
-        time_to_complete: "string",
+        time_to_complete: 0,
+        grade_levels: [],
         subjects: [
             {
-                subject_id: "",
-                subject_name: "",
+                id: "",
+                name: "",
             },
         ],
         files: [
             {
-                file_id: "",
-                fil_name: "",
+                id: "",
+                name: "",
             },
         ],
         images: [
             {
-                file_id: "",
+                id: "",
                 alt_text: "",
             },
         ],
@@ -55,17 +57,16 @@ export default function ArticleDetails({ match }) {
                 <Row className="row">
                     <Col className="col" xs={4} md={4}>
                         {
-                            // @ts-ignore
                             <Image
                                 className="image"
                                 src={
-                                    article?.images["0"]
-                                        ? fileAPI + article.images["0"].file_id
+                                    article?.images[0]
+                                        ? fileAPI + article.images[0].id
                                         : ntnu
                                 }
                                 alt={
-                                    article?.images["0"]
-                                        ? article.images["0"].alt_text
+                                    article?.images[0]
+                                        ? article.images[0].alt_text
                                         : "ingen bilder for dette undervisningsopplegget"
                                 }
                                 rounded
@@ -88,9 +89,7 @@ export default function ArticleDetails({ match }) {
                                 <h4>Fagkode : </h4>
                                 {article.subjects!.map((subject, index) => {
                                     return (
-                                        <span key={index}>
-                                            {subject.subject_id},{" "}
-                                        </span>
+                                        <span key={index}>{subject.id}, </span>
                                     );
                                 })}
                             </ListGroup.Item>
@@ -99,7 +98,7 @@ export default function ArticleDetails({ match }) {
                                 {article.subjects!.map((subject, index) => {
                                     return (
                                         <span key={index}>
-                                            {subject.subject_name},{" "}
+                                            {subject.name},{" "}
                                         </span>
                                     );
                                 })}

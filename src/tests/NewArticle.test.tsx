@@ -1,6 +1,5 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
-import NewArticle from "./NewArticle";
+import NewArticle from "../Comoponents/Articles/NewArticle";
 
 test("Simple verification of successful render of NewArticle component", () => {
     render(<NewArticle />);

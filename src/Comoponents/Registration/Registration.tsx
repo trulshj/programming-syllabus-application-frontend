@@ -1,10 +1,8 @@
-import React from "react";
 import { Form, Button, Row, Col, Image } from "react-bootstrap";
+import { registration } from "../../api/userData.service";
 import LoggInn from "../../LoggInn.jpg";
-import { registration } from "../../Api";
 
 const Registration = (props) => {
-    // @ts-ignore
     let username: string = "";
     let email: string = "";
     let password: string = "";

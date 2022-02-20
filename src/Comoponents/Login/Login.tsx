@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Form, Button, Row, Col, Image } from "react-bootstrap";
 import LoggImage from "../../LoggInn.jpg";
-import { login } from "../../Api";
 import { UserStatusContext } from "../../App";
+import { login } from "../../api/userData.service";
 
-const LoggInn = (props) => {
+const Login = (props) => {
     const userStatus = useContext(UserStatusContext);
     const setUserStatus = userStatus[1];
     const [error, setError] = useState(false);
@@ -12,18 +12,21 @@ const LoggInn = (props) => {
     let email = "";
     let password = "";
 
-    function keyDownEvent(event) {
+    function handleKeyDown(event) {
         //key 13 is enter-key
         if (event.keyCode === 13) {
             event.preventDefault();
             login(email, password)
                 .then((res) => {
                     if (res) {
-                        localStorage.setItem("userId", res.user.user_id);
-                        localStorage.setItem("username", res.user.username);
-                        localStorage.setItem("email", res.user.email);
-                        localStorage.setItem("roleId", res.user.role_id);
-                        localStorage.setItem("updatedAt", res.user.updatedAt);
+                        localStorage.setItem("userId", res.id);
+                        localStorage.setItem("username", res.username);
+                        localStorage.setItem("email", res.email);
+                        localStorage.setItem("roleId", res.roleId.toString());
+                        localStorage.setItem(
+                            "updatedAt",
+                            res.updatedAt.toString()
+                        );
                         setUserStatus(true);
                         props.history.push("/");
                     }
@@ -44,7 +47,7 @@ const LoggInn = (props) => {
                 <Col>
                     <h3 className="text-info">Logg inn</h3>
                     <Form
-                        onKeyDown={keyDownEvent}
+                        onKeyDown={handleKeyDown}
                         style={{
                             width: "50%",
                             marginLeft: "30%",
@@ -83,7 +86,7 @@ const LoggInn = (props) => {
                         <Button
                             variant="primary"
                             onClick={(e) => {
-                                keyDownEvent({
+                                handleKeyDown({
                                     keyCode: 13,
                                     preventDefault: () => {},
                                 });
@@ -105,4 +108,4 @@ const LoggInn = (props) => {
     );
 };
 
-export default LoggInn;
+export default Login;

@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { Form, Row, Col, Container, Button } from "react-bootstrap";
-import { newArticle } from "../../Api";
+import { newArticle } from "../../api/article.service";
+import { Article, File } from "../../types/Article";
 
 export default class NewArticle extends Component {
     componentDidMount() {
@@ -10,14 +11,16 @@ export default class NewArticle extends Component {
     }
 
     render() {
-        let article = {
+        let article: Article = {
+            article_id: 0,
             article_title: "",
-            author_id: localStorage.getItem("userId"),
+            article_author: localStorage.getItem("userId") || "",
             article_description: "",
             time_to_complete: 10,
             images: [],
             files: [],
             grade_levels: [],
+            subjects: [],
         };
         let image;
         let tempFiles: any = [];
@@ -74,25 +77,20 @@ export default class NewArticle extends Component {
                                     }}
                                     variant="primary"
                                     onClick={async () => {
-                                        let filesToUpload: any = [];
+                                        let filesToUpload: File[] = [];
                                         for (
                                             let i = 0;
                                             i < tempFiles.length;
                                             i++
                                         ) {
                                             filesToUpload.push(tempFiles[i]);
-                                            // @ts-ignore
-                                            article.files.push({
-                                                file_name: tempFiles[i].name,
-                                            });
+                                            article.files.push(tempFiles[i]);
                                         }
 
                                         if (image) {
-                                            // @ts-ignore
                                             article.images.push({
                                                 alt_text: "",
-                                                file_name:
-                                                    image.name.toString(),
+                                                id: image.name.toString(),
                                             });
                                             filesToUpload.push(image);
                                         }
@@ -160,9 +158,8 @@ export default class NewArticle extends Component {
                                     onChange={(event) => {
                                         article.grade_levels = [];
                                         if (Number(event.target.value)) {
-                                            // @ts-ignore
                                             article.grade_levels.push({
-                                                grade_id: event.target.value,
+                                                grade_name: event.target.value,
                                             });
                                         }
                                     }}
