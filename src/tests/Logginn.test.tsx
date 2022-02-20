@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import Login from "../Comoponents/Login/Login";
+import Login from "../Components/Login/Login";
 
 test("Simple verification of successful render of Login component", () => {
     render(<Login />);

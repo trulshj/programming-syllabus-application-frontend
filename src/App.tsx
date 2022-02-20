@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import "./App.css";
-import NavBar from "./Comoponents/MainPage/NavBar";
-import MainSection from "./Comoponents/MainPage/MainSection";
-import ArticlesList from "./Comoponents/Articles/ArticlesList";
+import NavBar from "./Components/MainPage/NavBar";
+import MainSection from "./Components/MainPage/MainSection";
+import ArticlesList from "./Components/Articles/ArticlesList";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import ArticleDetails from "./Comoponents/Articles/ArticleDetails";
-import Login from "./Comoponents/Login/Login";
-import Registration from "./Comoponents/Registration/Registration";
-import RegisteredUserMeny from "./Comoponents/Meny/RegisteredUserMeny";
-import NewArticle from "./Comoponents/Articles/NewArticle";
+import ArticleDetails from "./Components/Articles/ArticleDetails";
+import Login from "./Components/Login/Login";
+import Registration from "./Components/Registration/Registration";
+import RegisteredUserMeny from "./Components/Meny/RegisteredUserMeny";
+import NewArticle from "./Components/Articles/NewArticle";
 
 export const UserStatusContext = React.createContext({});
 const App: React.FC = () => {
