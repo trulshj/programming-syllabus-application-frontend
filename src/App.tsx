@@ -37,7 +37,7 @@ const App: React.FC = () => {
                             path="/articlelist/:id"
                             component={ArticleDetails}
                         />
-                        <Route path="/logginn" component={Login} />
+                        <Route path="/login" component={Login} />
                         <Route path="/Registration" component={Registration} />
                         <Route
                             path="/usermeny"

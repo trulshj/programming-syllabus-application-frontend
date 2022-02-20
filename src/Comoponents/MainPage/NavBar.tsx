@@ -102,7 +102,7 @@ export default function NavBar() {
                             <Nav.Link href="/registration">Ny bruker</Nav.Link>
                         )}
                         {userStatus[0] ? null : (
-                            <Nav.Link href="/logginn">Logg inn </Nav.Link>
+                            <Nav.Link href="/login">Logg inn </Nav.Link>
                         )}
                     </Nav>
                 </Navbar.Collapse>

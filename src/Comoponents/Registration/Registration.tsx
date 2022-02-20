@@ -15,7 +15,7 @@ const Registration = (props) => {
             if (username && email && password === passwordConfirm) {
                 registration(email, password, username)
                     .then((res) => {
-                        props.history.push("/logginn");
+                        props.history.push("/login");
                     })
                     .catch((error) => console.log("error", error));
             } else {
@@ -125,7 +125,7 @@ const Registration = (props) => {
             </Row>
             <Row className="py-4">
                 <Col>
-                    Har du allerede en konto <a href="/logginn">login her</a>
+                    Har du allerede en konto <a href="/login">login her</a>
                 </Col>
             </Row>
         </div>

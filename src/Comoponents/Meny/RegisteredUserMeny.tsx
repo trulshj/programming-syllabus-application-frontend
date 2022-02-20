@@ -5,7 +5,7 @@ import "./RegisteredUserMeny.css";
 export default class RegisteredUserMeny extends Component {
     componentDidMount() {
         if (!localStorage.getItem("userId")) {
-            window.location.href = "/logginn";
+            window.location.href = "/login";
         }
     }
     render() {
