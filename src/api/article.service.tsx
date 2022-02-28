@@ -2,28 +2,31 @@ import { Article } from "../types/Article";
 import { baseUrl } from "./baseApi";
 import axios from "axios";
 
+const articlesUrl = baseUrl + "articles";
+
 export const fetchArticles = async () => {
-    let data = await axios
-        .get<Article[]>(baseUrl + "articleList")
+    let data: any;
+    data = await axios
+        .get<Article[]>(articlesUrl)
         .catch((error) => console.error(error));
-    return data?.data;
+    return data?.data ?? [];
 };
 
 export const searchArticles = async (searchString: string) => {
-    let data = await axios
-        .get<Article[]>(baseUrl + "articleList", {
+    let data: any = await axios
+        .get<Article[]>(articlesUrl, {
             headers: { query: searchString },
         })
         .catch((error) => {
             console.error(error);
         });
 
-    return data?.data;
+    return data?.data ?? [];
 };
 
 export const fetchArticlesByUser = async (userid: string) => {
-    let data = await axios
-        .get(baseUrl + "articlelist", {
+    let data: any = await axios
+        .get(articlesUrl, {
             headers: {
                 "query-type": "byUser",
                 userID: userid,
@@ -31,23 +34,26 @@ export const fetchArticlesByUser = async (userid: string) => {
         })
         .catch((error) => console.error(error));
 
-    return data?.data;
+    return data?.data ?? [];
 };
 
 export const newArticle = async (article, files) => {
     let requestBody = new FormData();
     let response;
+
     requestBody.append("body", JSON.stringify(article));
     files.map((oneFile) => requestBody.append("file", oneFile, oneFile.name));
+
     response = await axios
-        .post(baseUrl + "article", requestBody)
+        .post(articlesUrl, requestBody)
         .catch((error: any) => console.error("api newArticle:", error));
-    return response.status === 200;
+
+    return response?.status === 200;
 };
 
 export const fetchArticle = async (id, userId) => {
-    let data = await axios
-        .get(baseUrl + "article/" + id, {
+    let data: any = await axios
+        .get(articlesUrl + "/" + id, {
             headers: {
                 user_id: userId,
             },

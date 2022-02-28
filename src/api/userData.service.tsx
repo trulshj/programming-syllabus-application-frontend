@@ -4,7 +4,8 @@ import { User } from "../types/User";
 
 export const login = async (email: string, password: string) => {
     const endpoint = baseUrl + "login";
-    let data = await axios
+
+    let data: any = await axios
         .post<{ email: string; password: string }, AxiosResponse<User>>(
             endpoint,
             {
@@ -24,13 +25,13 @@ export const registration = async (
     password: string,
     username: string
 ) => {
-    const endpoint = baseUrl + "user";
+    const endpoint = baseUrl + "users";
 
     if (!email || !password || !username) {
         return undefined;
     }
 
-    let data = await axios
+    let data: any = await axios
         .post<
             { email: string; username: string; password: string },
             AxiosResponse<string>

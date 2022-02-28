@@ -19,7 +19,7 @@ export default function NavBar() {
     function keyDownEvent(event) {
         //key 13 is enter-key
         if (event.keyCode === 13) {
-            event.preventDefault();
+            //event.preventDefault();
         }
     }
 
