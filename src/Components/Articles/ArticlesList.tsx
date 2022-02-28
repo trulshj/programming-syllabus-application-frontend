@@ -15,28 +15,28 @@ const ArticlesList = ({ match }) => {
     const maxTitleLenght = 25;
     const maxDescriptionLenght = 175;
 
-    function getTimeDiff(inputTime) {
+    function getTimeDiff(input: string) {
+        const inputTime = new Date(input);
         const time = new Date();
         const mmsDiff = time.getTime() - inputTime.getTime();
+
         // older than one day
         if (mmsDiff > 24 * 60 * 60 * 1000) {
-            const diffDays =
-                (time.getTime() - inputTime.getTime()) / (24 * 60 * 60 * 1000);
+            const diffDays = mmsDiff / (24 * 60 * 60 * 1000);
             return diffDays.toString().split(".")[0] + " dager siden";
-        } else if (mmsDiff > 60 * 60 * 1000) {
-            const diffDays =
-                (time.getTime() - inputTime.getTime()) / (60 * 60 * 1000);
-            return diffDays.toString().split(".")[0] + " timer siden";
-        } else if (mmsDiff > 60 * 1000) {
-            const diffMinues =
-                (time.getTime() - inputTime.getTime()) / (60 * 1000);
-            return diffMinues.toString().split(".")[0] + " minutter siden";
         }
+        if (mmsDiff > 60 * 60 * 1000) {
+            const diffDays = mmsDiff / (60 * 60 * 1000);
+            return diffDays.toString().split(".")[0] + " timer siden";
+        }
+
+        const diffMinues = (time.getTime() - inputTime.getTime()) / (60 * 1000);
+        return diffMinues.toString().split(".")[0] + " minutter siden";
     }
 
     useEffect(() => {
         async function fetchData() {
-            let newArticles;
+            let newArticles: Article[];
             // deciding the type of articles
             if (window.location.pathname === "/articlelist/myarticles") {
                 newArticles = await fetchArticlesByUser(
@@ -49,7 +49,7 @@ const ArticlesList = ({ match }) => {
                 //regular article list view
                 newArticles = await fetchArticles();
             }
-            setArticles(newArticles.article);
+            setArticles(newArticles);
         }
         fetchData();
     }, [match.params.id]);
@@ -66,28 +66,29 @@ const ArticlesList = ({ match }) => {
                                           <Card.Img
                                               variant={"top"}
                                               src={
-                                                  article?.images["0"]
+                                                  article?.Images["0"]
                                                       ? "https://localhost:8080/api/file/" +
-                                                        article.images["0"].id
+                                                        article.Images["0"]
+                                                            .fileId
                                                       : ntnu
                                               }
                                               alt={
-                                                  article?.images["0"]
-                                                      ? article.images["0"]
-                                                            .alt_text
+                                                  article?.Images["0"]
+                                                      ? article.Images["0"]
+                                                            .altText
                                                       : "ingen bilder for dette undervisningsopplegget"
                                               }
                                           />
                                       }
                                       <Card.Body>
                                           <Card.Title>
-                                              {article.article_title
+                                              {article.title
                                                   .toString()
                                                   .substr(0, maxTitleLenght) +
                                                   " ..."}
                                           </Card.Title>
                                           <Card.Text>
-                                              {article.article_description
+                                              {article.description
                                                   .toString()
                                                   .substr(
                                                       0,
@@ -95,7 +96,7 @@ const ArticlesList = ({ match }) => {
                                                   ) + " ..."}
                                           </Card.Text>
                                           <Link
-                                              to={`/articlelist/${article.article_id}`}
+                                              to={`/articlelist/${article.id}`}
                                           >
                                               <Button variant="primary">
                                                   Gå til egenside
@@ -105,11 +106,7 @@ const ArticlesList = ({ match }) => {
                                       <Card.Footer>
                                           <small className="text-muted">
                                               Sist oppdatert{" "}
-                                              {getTimeDiff(
-                                                  new Date(
-                                                      article?.article_change_date as string
-                                                  )
-                                              )}
+                                              {getTimeDiff(article?.updatedAt)}
                                           </small>
                                       </Card.Footer>
                                   </Card>

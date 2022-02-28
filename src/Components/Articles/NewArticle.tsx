@@ -12,15 +12,21 @@ export default class NewArticle extends Component {
 
     render() {
         let article: Article = {
-            article_id: 0,
-            article_title: "",
-            article_author: localStorage.getItem("userId") || "",
-            article_description: "",
-            time_to_complete: 10,
-            images: [],
-            files: [],
-            grade_levels: [],
-            subjects: [],
+            id: 0,
+            title: "",
+            authorId: localStorage.getItem("userId") || "",
+            description: "",
+            timeToComplete: 10,
+            Images: [],
+            Files: [],
+            Grades: [],
+            Subjects: [],
+            Tools: [],
+            Themes: [],
+            published: false,
+            viewCounter: 0,
+            createdAt: "",
+            updatedAt: "",
         };
         let image;
         let tempFiles: any = [];
@@ -84,13 +90,13 @@ export default class NewArticle extends Component {
                                             i++
                                         ) {
                                             filesToUpload.push(tempFiles[i]);
-                                            article.files.push(tempFiles[i]);
+                                            article.Files.push(tempFiles[i]);
                                         }
 
                                         if (image) {
-                                            article.images.push({
-                                                alt_text: "",
-                                                id: image.name.toString(),
+                                            article.Images.push({
+                                                altText: "",
+                                                fileId: image.name.toString(),
                                             });
                                             filesToUpload.push(image);
                                         }
@@ -132,8 +138,7 @@ export default class NewArticle extends Component {
                                     }}
                                     placeholder="Oppgavetittel"
                                     onChange={(evnet) => {
-                                        article.article_title =
-                                            evnet.target.value;
+                                        article.title = evnet.target.value;
                                     }}
                                 />
                                 <Form.Label
@@ -156,10 +161,11 @@ export default class NewArticle extends Component {
                                 <Form.Control
                                     defaultValue={0}
                                     onChange={(event) => {
-                                        article.grade_levels = [];
+                                        article.Grades = [];
                                         if (Number(event.target.value)) {
-                                            article.grade_levels.push({
-                                                grade_name: event.target.value,
+                                            article.Grades.push({
+                                                id: Number(event.target.value),
+                                                name: "event.target.value",
                                             });
                                         }
                                     }}
@@ -214,7 +220,7 @@ export default class NewArticle extends Component {
                                         as="textarea"
                                         rows={3}
                                         onChange={(evnet) => {
-                                            article.article_description =
+                                            article.description =
                                                 evnet.target.value;
                                         }}
                                     />

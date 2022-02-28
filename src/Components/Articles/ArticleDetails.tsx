@@ -8,32 +8,21 @@ import { fetchArticle } from "../../api/article.service";
 export default function ArticleDetails({ match }) {
     const fileAPI = "https://localhost:8080/api/file/";
     const [article, setArticle] = useState<Article>({
-        article_title: "",
-        article_author: "",
-        article_description: "",
-        publications_date: "string",
-        article_change_date: "string",
-        time_to_complete: 0,
-        grade_levels: [],
-        subjects: [
-            {
-                id: "",
-                name: "",
-            },
-        ],
-        files: [
-            {
-                id: "",
-                name: "",
-            },
-        ],
-        images: [
-            {
-                id: "",
-                alt_text: "",
-            },
-        ],
-        article_id: 0,
+        id: 0,
+        title: "",
+        authorId: "",
+        description: "",
+        timeToComplete: 0,
+        Grades: [],
+        Subjects: [],
+        Files: [],
+        Images: [],
+        Themes: [],
+        Tools: [],
+        published: false,
+        viewCounter: 0,
+        createdAt: "",
+        updatedAt: "",
     });
 
     useEffect(() => {
@@ -42,7 +31,7 @@ export default function ArticleDetails({ match }) {
                 await fetchArticle(
                     match.params.id,
                     localStorage.getItem("userId")
-                ).then((newArticle) => setArticle(newArticle.article));
+                ).then((newArticle) => setArticle(newArticle));
             } catch (error) {
                 console.log("fetch article error:", error);
             }
@@ -52,7 +41,7 @@ export default function ArticleDetails({ match }) {
 
     return (
         <div>
-            <h1 key={article.article_id}> </h1>
+            <h1 key={article.id}> </h1>
             <Container fluid>
                 <Row className="row">
                     <Col className="col" xs={4} md={4}>
@@ -60,13 +49,13 @@ export default function ArticleDetails({ match }) {
                             <Image
                                 className="image"
                                 src={
-                                    article?.images[0]
-                                        ? fileAPI + article.images[0].id
+                                    article?.Images[0]
+                                        ? fileAPI + article.Images[0].fileId
                                         : ntnu
                                 }
                                 alt={
-                                    article?.images[0]
-                                        ? article.images[0].alt_text
+                                    article?.Images[0]
+                                        ? article.Images[0].altText
                                         : "ingen bilder for dette undervisningsopplegget"
                                 }
                                 rounded
@@ -78,16 +67,16 @@ export default function ArticleDetails({ match }) {
                             <ListGroup.Item>
                                 {" "}
                                 <h4>Oppgavetittel :</h4>
-                                <span>{article.article_title}</span>{" "}
+                                <span>{article.title}</span>{" "}
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 <h4>Oppgavebeskrivelse :</h4>{" "}
-                                <span>{article.article_description}</span>
+                                <span>{article.description}</span>
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 {" "}
                                 <h4>Fagkode : </h4>
-                                {article.subjects!.map((subject, index) => {
+                                {article.Subjects!.map((subject, index) => {
                                     return (
                                         <span key={index}>{subject.id}, </span>
                                     );
@@ -95,7 +84,7 @@ export default function ArticleDetails({ match }) {
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 <h4>Fag : </h4>{" "}
-                                {article.subjects!.map((subject, index) => {
+                                {article.Subjects!.map((subject, index) => {
                                     return (
                                         <span key={index}>
                                             {subject.name},{" "}

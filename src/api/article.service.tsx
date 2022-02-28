@@ -5,15 +5,20 @@ import axios from "axios";
 const articlesUrl = baseUrl + "articles";
 
 export const fetchArticles = async () => {
-    let data: any;
-    data = await axios
+    const data = await axios
         .get<Article[]>(articlesUrl)
         .catch((error) => console.error(error));
-    return data?.data ?? [];
+
+    if (data) {
+        console.log(data.data);
+        return data.data;
+    }
+
+    return [];
 };
 
 export const searchArticles = async (searchString: string) => {
-    let data: any = await axios
+    const data = await axios
         .get<Article[]>(articlesUrl, {
             headers: { query: searchString },
         })
@@ -21,7 +26,10 @@ export const searchArticles = async (searchString: string) => {
             console.error(error);
         });
 
-    return data?.data ?? [];
+    if (data) {
+        return data.data;
+    }
+    return [];
 };
 
 export const fetchArticlesByUser = async (userid: string) => {

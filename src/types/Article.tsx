@@ -1,20 +1,19 @@
 export type Article = {
-    article_title: string;
-    article_author: string;
-    article_description: string;
-    publications_date?: string;
-    article_change_date?: string;
-    time_to_complete: number;
-    article_id: number;
-    grade_levels: GradeLevel[];
-    subjects: Subject[];
-    files: File[];
-    images: Image[];
-};
-
-export type Subject = {
-    id: string;
-    name: string;
+    id: number;
+    title: string;
+    description: string;
+    authorId: string;
+    published: boolean;
+    timeToComplete: number;
+    viewCounter: number;
+    createdAt: string;
+    updatedAt: string;
+    Grades: Grade[];
+    Subjects: Subject[];
+    Files: File[];
+    Images: Image[];
+    Themes: Theme[];
+    Tools: Tool[];
 };
 
 export type File = {
@@ -23,10 +22,26 @@ export type File = {
 };
 
 export type Image = {
-    id: string;
-    alt_text: string;
+    fileId: string;
+    altText: string;
 };
 
-export type GradeLevel = {
-    grade_name: string;
+export type Subject = {
+    id: number;
+    name: string;
+};
+
+export type Grade = {
+    id: number;
+    name: string;
+};
+
+export type Theme = {
+    id: number;
+    name: string;
+};
+
+export type Tool = {
+    id: number;
+    name: string;
 };
