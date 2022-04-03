@@ -26,7 +26,6 @@ export default class RegisteredUserMeny extends Component {
                             }}
                             variant="secondary"
                             size="lg"
-                            block
                         >
                             Mine undervisningsopplegg
                         </Button>
@@ -43,7 +42,6 @@ export default class RegisteredUserMeny extends Component {
                                 }}
                                 variant="secondary"
                                 size="lg"
-                                block
                             >
                                 Lag et nytt undervisningsopplegg
                             </Button>
@@ -61,7 +59,6 @@ export default class RegisteredUserMeny extends Component {
                                 }}
                                 variant="secondary"
                                 size="lg"
-                                block
                             >
                                 Til Hovedsiden
                             </Button>

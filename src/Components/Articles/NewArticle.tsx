@@ -1,8 +1,179 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import { Form, Row, Col, Container, Button } from "react-bootstrap";
 import { newArticle } from "../../api/article.service";
 import { Article, File } from "../../types/Article";
 
+const NewArticle = () => {
+    let image: globalThis.File | null;
+    let tempFiles: FileList | null;
+
+    let article: Article = {
+        id: 0,
+        title: "",
+        authorId: localStorage.getItem("userId") || "",
+        description: "",
+        timeToComplete: 10,
+        Images: [],
+        Files: [],
+        Grades: [],
+        Subjects: [],
+        Tools: [],
+        Themes: [],
+        published: false,
+        viewCounter: 0,
+        createdAt: "",
+        updatedAt: "",
+    };
+
+    return (
+        <Container>
+            <Form>
+                <Row>
+                    <Col>
+                        <Form.Group controlId="imageControl">
+                            <Form.Label>Last opp bilde :</Form.Label>
+                            <Form.Control
+                                type="file"
+                                onChange={(e) => {
+                                    image = ((
+                                        e.currentTarget as HTMLInputElement
+                                    ).files ?? [])[0];
+                                }}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="fileControl">
+                            <Form.Label>Last opp filer :</Form.Label>
+                            <Form.Control
+                                type="file"
+                                multiple
+                                onChange={(newFiles) => {
+                                    tempFiles = (
+                                        newFiles.currentTarget as HTMLInputElement
+                                    ).files;
+                                }}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="toolsControl">
+                            <Form.Label>Verktøy som brukes :</Form.Label>
+                            <Form.Control as="textarea" rows={3} />
+                        </Form.Group>
+
+                        <Button
+                            variant="primary"
+                            onClick={async () => {
+                                let filesToUpload: globalThis.File[] = [];
+
+                                if (tempFiles) {
+                                    for (let i = 0; i < tempFiles.length; i++) {
+                                        filesToUpload.push(tempFiles[i]);
+                                    }
+                                }
+
+                                if (image) {
+                                    filesToUpload.push(image);
+
+                                    article.Images.push({
+                                        altText: "",
+                                        fileId: image.name,
+                                    });
+                                }
+                                await newArticle(article, filesToUpload).then(
+                                    async (res) => {
+                                        console.log("new article status:", res);
+                                        if (res) {
+                                            window.location.href =
+                                                "/articlelist/myarticles";
+                                        }
+                                    }
+                                );
+                            }}
+                        >
+                            Lagre
+                        </Button>
+                        <Button variant="primary">Tilbake</Button>
+                    </Col>
+                    <Col>
+                        <Form.Group>
+                            <Form.Label>Oppgavetilttel</Form.Label>
+                            <Form.Control
+                                placeholder="Oppgavetittel"
+                                onChange={(evnet) => {
+                                    article.title = evnet.target.value;
+                                }}
+                            />
+                        </Form.Group>
+
+                        <Form.Group>
+                            <Form.Label>Fagkode</Form.Label>
+                            <Form.Control placeholder="Fagkode" />
+                        </Form.Group>
+
+                        <Form.Group>
+                            <Form.Label>Årstrinn</Form.Label>
+                            <Form.Control
+                                defaultValue={0}
+                                onChange={(event) => {
+                                    article.Grades = [];
+                                    if (Number(event.target.value)) {
+                                        article.Grades.push({
+                                            id: Number(event.target.value),
+                                            name: "event.target.value",
+                                        });
+                                    }
+                                }}
+                                as="select"
+                            >
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </Form.Control>
+                        </Form.Group>
+
+                        <Form.Group>
+                            <Form.Label>Tema</Form.Label>
+                            <Form.Control
+                                style={{
+                                    border: "3px",
+                                    borderStyle: "solid",
+                                }}
+                                placeholder="Tema"
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="exampleForm.ControlTextarea1">
+                            <Form.Label
+                                style={{
+                                    marginTop: "5%",
+                                    float: "left",
+                                }}
+                            >
+                                Beskrivelde :
+                            </Form.Label>
+                            <Form.Control
+                                style={{
+                                    marginTop: "7%",
+                                    border: "3px",
+                                    borderStyle: "solid",
+                                }}
+                                as="textarea"
+                                rows={3}
+                                onChange={(evnet) => {
+                                    article.description = evnet.target.value;
+                                }}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
+            </Form>
+        </Container>
+    );
+};
+
+export default NewArticle;
+
+/*
 export default class NewArticle extends Component {
     componentDidMount() {
         if (!localStorage.getItem("userId")) {
@@ -36,27 +207,39 @@ export default class NewArticle extends Component {
                     <Form>
                         <Row>
                             <Col>
-                                <Form.Label style={{ float: "left" }}>
-                                    Last opp bilde :
-                                </Form.Label>
-                                <Form.File
-                                    id="exampleFormControlFile1"
-                                    onChange={(newImage) => {
-                                        image = newImage.target.files[0];
-                                    }}
-                                />
-                                <Form.Label
-                                    style={{ marginTop: "25%", float: "left" }}
-                                >
-                                    Last opp filer :
-                                </Form.Label>
-                                <Form.File
-                                    multiple
-                                    id="exampleFormControlFile1"
-                                    onChange={(newFiles) => {
-                                        tempFiles = newFiles.target.files;
-                                    }}
-                                />
+                                <Form.Group>
+                                    <Form.Label style={{ float: "left" }}>
+                                        Last opp bilde :
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="file"
+                                        id="imageControl"
+                                        onChange={(newImage) => {
+                                            image = newImage.target.files[0];
+                                        }}
+                                    />
+                                </Form.Group>
+
+                                <Form.Group>
+                                    <Form.Label
+                                        style={{
+                                            marginTop: "25%",
+                                            float: "left",
+                                        }}
+                                    >
+                                        Last opp filer :
+                                    </Form.Label>
+                                    <Form.Control
+                                        type="file"
+                                        multiple
+                                        id="fileControl"
+                                        onChange={(newFiles) => {
+                                            tempFiles =
+                                                newFiles.currentTarget.files;
+                                        }}
+                                    />
+                                </Form.Group>
+
                                 <Form.Group controlId="exampleForm.ControlTextarea1">
                                     <Form.Label
                                         style={{
@@ -76,6 +259,7 @@ export default class NewArticle extends Component {
                                         rows={3}
                                     />
                                 </Form.Group>
+
                                 <Button
                                     style={{
                                         marginTop: "7%",
@@ -233,3 +417,5 @@ export default class NewArticle extends Component {
         );
     }
 }
+
+*/
