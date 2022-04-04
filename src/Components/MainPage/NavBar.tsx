@@ -6,6 +6,8 @@ import {
     Form,
     FormControl,
     Button,
+    Row,
+    Col,
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
@@ -30,47 +32,8 @@ export default function NavBar() {
             <Navbar collapseOnSelect expand="lg" bg="blue" variant="dark">
                 <Navbar.Brand href="/">NTNU</Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="mr-auto">
-                        <NavDropdown
-                            title="Temasider"
-                            id="collasible-nav-dropdown"
-                        >
-                            <NavDropdown.Item href="#action/3.1">
-                                Action
-                            </NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">
-                                Another action
-                            </NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">
-                                Something
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">
-                                Separated link
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                        <NavDropdown
-                            title="Årstrinn"
-                            id="collasible-nav-dropdown"
-                        >
-                            <NavDropdown.Item href="#action/3.1">
-                                Action
-                            </NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.2">
-                                Another action
-                            </NavDropdown.Item>
-                            <NavDropdown.Item href="#action/3.3">
-                                Something
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action/3.4">
-                                Separated link
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
-
-                    <Form onKeyDown={keyDownEvent} inline>
+                <Navbar.Collapse className="justify-content-end">
+                    <Form onKeyDown={keyDownEvent} className="d-flex">
                         <FormControl
                             type="text"
                             placeholder="Søk"
