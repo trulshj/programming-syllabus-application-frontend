@@ -1,10 +1,8 @@
-import React, { Component } from "react";
 import { Form, Row, Col, Container, Button } from "react-bootstrap";
 import { newArticle } from "../../api/article.service";
-import { Article, File } from "../../types/Article";
+import { Article } from "../../types/Article";
 
 const NewArticle = () => {
-    let image: globalThis.File | null;
     let tempFiles: FileList | null;
 
     let article: Article = {
@@ -13,12 +11,8 @@ const NewArticle = () => {
         authorId: localStorage.getItem("userId") || "",
         description: "",
         timeToComplete: 10,
-        Images: [],
         Files: [],
-        Grades: [],
-        Subjects: [],
-        Tools: [],
-        Themes: [],
+        Tags: [],
         published: false,
         viewCounter: 0,
         createdAt: "",
@@ -32,14 +26,7 @@ const NewArticle = () => {
                     <Col>
                         <Form.Group controlId="imageControl">
                             <Form.Label>Last opp bilde :</Form.Label>
-                            <Form.Control
-                                type="file"
-                                onChange={(e) => {
-                                    image = ((
-                                        e.currentTarget as HTMLInputElement
-                                    ).files ?? [])[0];
-                                }}
-                            />
+                            <Form.Control type="file" />
                         </Form.Group>
 
                         <Form.Group controlId="fileControl">
@@ -71,14 +58,6 @@ const NewArticle = () => {
                                     }
                                 }
 
-                                if (image) {
-                                    filesToUpload.push(image);
-
-                                    article.Images.push({
-                                        altText: "",
-                                        fileId: image.name,
-                                    });
-                                }
                                 await newArticle(article, filesToUpload).then(
                                     async (res) => {
                                         console.log("new article status:", res);
@@ -92,7 +71,12 @@ const NewArticle = () => {
                         >
                             Lagre
                         </Button>
-                        <Button variant="primary">Tilbake</Button>
+                        <Button
+                            variant="primary"
+                            onClick={() => window.history.back()}
+                        >
+                            Tilbake
+                        </Button>
                     </Col>
                     <Col>
                         <Form.Group>
@@ -115,11 +99,11 @@ const NewArticle = () => {
                             <Form.Control
                                 defaultValue={0}
                                 onChange={(event) => {
-                                    article.Grades = [];
                                     if (Number(event.target.value)) {
-                                        article.Grades.push({
+                                        article.Tags.push({
                                             id: Number(event.target.value),
                                             name: "event.target.value",
+                                            tagType: "grade",
                                         });
                                     }
                                 }}

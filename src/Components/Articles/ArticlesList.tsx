@@ -8,7 +8,7 @@ import {
     Form,
     FormGroup,
 } from "react-bootstrap";
-import { Article } from "../../types/Article";
+import { Article, Tag } from "../../types/Article";
 import { Link } from "react-router-dom";
 import ntnu from "../../ntnu.jpg";
 import "./ArticlesList.css";
@@ -18,14 +18,55 @@ import {
     searchArticles,
 } from "../../api/article.service";
 import { getTimeDiff } from "../../lib/Helpers";
+import { fetchTags } from "../../api/tag.service";
 
 const ArticlesList = ({ match }) => {
     const [articles, setArticles] = useState<Article[]>([]);
-    const maxTitleLength = 25;
+    const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
+
+    const [subjects, setSubjects] = useState<Tag[]>([]);
+    const [grades, setGrades] = useState<Tag[]>([]);
+    const [tools, setTools] = useState<Tag[]>([]);
+
+    const maxTitleLength = 30;
     const maxDescriptionLength = 175;
+
+    const cutString = (maxLength: number, str: string) => {
+        return (
+            str.substring(0, maxLength) + (str.length > maxLength ? " ..." : "")
+        );
+    };
+
+    const handleFilter = (event) => {
+        event.preventDefault();
+
+        const gradeFilter = parseInt(event.currentTarget.gradeControl.value);
+        const subjectFilter = parseInt(
+            event.currentTarget.subjectControl.value
+        );
+        const toolFilter = parseInt(event.currentTarget.toolControl.value);
+
+        setFilteredArticles(
+            articles.filter(
+                (x) =>
+                    (gradeFilter === -1 ||
+                        x.Tags.some((t) => t.id === gradeFilter)) &&
+                    (subjectFilter === -1 ||
+                        x.Tags.some((t) => t.id === subjectFilter)) &&
+                    (toolFilter === -1 ||
+                        x.Tags.some((t) => t.id === toolFilter))
+            )
+        );
+    };
 
     useEffect(() => {
         async function fetchData() {
+            fetchTags().then((res) => {
+                setGrades(res.filter((x) => x.tagType === "grade"));
+                setSubjects(res.filter((x) => x.tagType === "subject"));
+                setTools(res.filter((x) => x.tagType === "tool"));
+            });
+
             let newArticles: Article[];
             // deciding the type of articles
             if (window.location.pathname === "/articlelist/myarticles") {
@@ -40,6 +81,7 @@ const ArticlesList = ({ match }) => {
                 newArticles = await fetchArticles();
             }
             setArticles(newArticles);
+            setFilteredArticles(newArticles);
         }
         fetchData();
     }, [match.params.id]);
@@ -52,8 +94,11 @@ const ArticlesList = ({ match }) => {
 
                     <Col className="filtercolumn" lg={3}>
                         <h1 className="mt-4 mb-5 font-weight-light">Filter</h1>
-                        <Form>
-                            <FormGroup className="mb-5" controlId="yearControl">
+                        <Form onChange={handleFilter}>
+                            <FormGroup
+                                className="mb-5"
+                                controlId="gradeControl"
+                            >
                                 <Form.Label className="col-md-10 col-sm-10 lead">
                                     Årstrinn
                                 </Form.Label>
@@ -61,10 +106,12 @@ const ArticlesList = ({ match }) => {
                                     className="col-md-10 col-sm-10 rounded font-weight-light"
                                     aria-label="Year"
                                 >
-                                    <option>Velg...</option>
-                                    <option value="1">1.klasse</option>
-                                    <option value="2">2.klasse</option>
-                                    <option value="3">3.klasse</option>
+                                    <option value="-1">Velg...</option>
+                                    {grades.map((grade) => (
+                                        <option key={grade.id} value={grade.id}>
+                                            {grade.name}
+                                        </option>
+                                    ))}
                                 </Form.Select>
                             </FormGroup>
                             <FormGroup
@@ -78,10 +125,15 @@ const ArticlesList = ({ match }) => {
                                     className="col-md-10 col-sm-10 rounded font-weight-light"
                                     aria-label="Subject"
                                 >
-                                    <option>Velg...</option>
-                                    <option value="math">Matematikk</option>
-                                    <option value="physics">Fysikk</option>
-                                    <option value="chemistry">Kemi</option>
+                                    <option value="-1">Velg...</option>
+                                    {subjects.map((subject) => (
+                                        <option
+                                            key={subject.id}
+                                            value={subject.id}
+                                        >
+                                            {subject.name}
+                                        </option>
+                                    ))}
                                 </Form.Select>
                             </FormGroup>
                             <FormGroup className="mb-5" controlId="toolControl">
@@ -92,9 +144,12 @@ const ArticlesList = ({ match }) => {
                                     className="col-md-10 col-sm-10 rounded font-weight-light"
                                     aria-label="Tools"
                                 >
-                                    <option>Velg...</option>
-                                    <option value="python">Python</option>
-                                    <option value="js">JavaScript</option>
+                                    <option value="-1">Velg...</option>
+                                    {tools.map((tool) => (
+                                        <option key={tool.id} value={tool.id}>
+                                            {tool.name}
+                                        </option>
+                                    ))}
                                 </Form.Select>
                             </FormGroup>
                             <FormGroup className="mb-5" controlId="timeControl">
@@ -118,64 +173,60 @@ const ArticlesList = ({ match }) => {
                             Undervisningsopplegg
                         </h1>
                         <Row>
-                            {!articles
-                                ? null
-                                : articles.map((article, idx) => (
-                                      <Col key={idx} xl={4} lg={6} md={12}>
-                                          <Card>
-                                              {
-                                                  <Card.Img
-                                                      variant={"top"}
-                                                      src={
-                                                          article?.Images[0]
-                                                              ? "https://localhost:8080/api/file/" +
-                                                                article
-                                                                    ?.Images[0]
-                                                                    .fileId
-                                                              : ntnu
-                                                      }
-                                                      alt={
-                                                          article?.Images[0]
-                                                              ?.altText ??
-                                                          "ingen bilder for dette undervisningsopplegget"
-                                                      }
-                                                  />
-                                              }
-                                              <Card.Body>
-                                                  <Card.Title aria-label="Card Title">
-                                                      {article.title.substring(
-                                                          0,
-                                                          maxTitleLength
-                                                      ) + " ..."}
-                                                  </Card.Title>
-                                                  <Card.Text>
-                                                      {article.description.substring(
-                                                          0,
-                                                          maxDescriptionLength
-                                                      ) + " ..."}
-                                                  </Card.Text>
-                                                  <Link
-                                                      to={`/articlelist/${article.id}`}
-                                                  >
-                                                      <Button
-                                                          variant="primary"
-                                                          aria-label="Read more"
-                                                      >
-                                                          Les mer
-                                                      </Button>
-                                                  </Link>
-                                              </Card.Body>
-                                              <Card.Footer>
-                                                  <small className="text-muted">
-                                                      Sist oppdatert{" "}
-                                                      {getTimeDiff(
-                                                          article?.updatedAt
-                                                      )}
-                                                  </small>
-                                              </Card.Footer>
-                                          </Card>
-                                      </Col>
-                                  ))}
+                            {filteredArticles.map((article, idx) => (
+                                <Col key={idx} xl={4} lg={6} md={12}>
+                                    <Card>
+                                        {
+                                            <Card.Img
+                                                variant={"top"}
+                                                src={
+                                                    article?.Files[0]
+                                                        ? "https://localhost:8080/files/" +
+                                                          article.Files[0].id
+                                                        : ntnu
+                                                }
+                                                alt={
+                                                    article?.Files[0]
+                                                        ?.altText ??
+                                                    "ingen bilder for dette undervisningsopplegget"
+                                                }
+                                            />
+                                        }
+                                        <Card.Body>
+                                            <Card.Title aria-label="Card Title">
+                                                {cutString(
+                                                    maxTitleLength,
+                                                    article.title
+                                                )}
+                                            </Card.Title>
+                                            <Card.Text>
+                                                {cutString(
+                                                    maxDescriptionLength,
+                                                    article.description
+                                                )}
+                                            </Card.Text>
+                                            <Link
+                                                to={`/articlelist/${article.id}`}
+                                            >
+                                                <Button
+                                                    variant="primary"
+                                                    aria-label="Read more"
+                                                >
+                                                    Les mer
+                                                </Button>
+                                            </Link>
+                                        </Card.Body>
+                                        <Card.Footer>
+                                            <small className="text-muted">
+                                                Sist oppdatert{" "}
+                                                {getTimeDiff(
+                                                    article?.updatedAt
+                                                )}
+                                            </small>
+                                        </Card.Footer>
+                                    </Card>
+                                </Col>
+                            ))}
                         </Row>
                     </Col>
                 </Row>

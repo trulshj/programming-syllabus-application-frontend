@@ -32,14 +32,11 @@ export const searchArticles = async (searchString: string) => {
     return [];
 };
 
-export const fetchArticlesByUser = async (userid: string) => {
-    let data: any = await axios
-        .get(articlesUrl, {
-            headers: {
-                "query-type": "byUser",
-                userID: userid,
-            },
-        })
+export const fetchArticlesByUser = async (userId: string) => {
+    const endpoint = `${baseUrl}/users/${userId}/articles`;
+
+    let data = await axios
+        .get<Article[]>(endpoint)
         .catch((error) => console.error(error));
 
     return data?.data ?? [];

@@ -6,19 +6,15 @@ import ntnu from "../../ntnu.jpg";
 import { fetchArticle } from "../../api/article.service";
 
 export default function ArticleDetails({ match }) {
-    const fileAPI = "https://localhost:8080/api/file/";
+    const fileAPI = "https://localhost:8080/files/";
     const [article, setArticle] = useState<Article>({
         id: 0,
         title: "",
         authorId: "",
         description: "",
         timeToComplete: 0,
-        Grades: [],
-        Subjects: [],
         Files: [],
-        Images: [],
-        Themes: [],
-        Tools: [],
+        Tags: [],
         published: false,
         viewCounter: 0,
         createdAt: "",
@@ -49,13 +45,13 @@ export default function ArticleDetails({ match }) {
                             <Image
                                 className="image"
                                 src={
-                                    article?.Images[0]
-                                        ? fileAPI + article.Images[0].fileId
+                                    article?.Files[0]
+                                        ? fileAPI + article.Files[0].id
                                         : ntnu
                                 }
                                 alt={
-                                    article?.Images[0]
-                                        ? article.Images[0].altText
+                                    article?.Files[0]
+                                        ? article.Files[0].altText
                                         : "ingen bilder for dette undervisningsopplegget"
                                 }
                                 rounded
@@ -66,25 +62,50 @@ export default function ArticleDetails({ match }) {
                         <ListGroup variant="flush">
                             <ListGroup.Item>
                                 {" "}
-                                <h4>Oppgavetittel :</h4>
-                                <span>{article.title}</span>{" "}
+                                <h4>{article.title}</h4>{" "}
                             </ListGroup.Item>
                             <ListGroup.Item>
-                                <h4>Oppgavebeskrivelse :</h4>{" "}
-                                <span>{article.description}</span>
+                                <h5>{article.description}</h5>
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 {" "}
-                                <h4>Fagkode : </h4>
-                                {article.Subjects!.map((subject, index) => {
-                                    return (
-                                        <span key={index}>{subject.id}, </span>
-                                    );
+                                <h4>Klassetrinn : </h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "grade"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
+                                })}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                {" "}
+                                <h4>Fag: </h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "subject"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
+                                })}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                {" "}
+                                <h4>Tema:</h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "theme"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
+                                })}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                {" "}
+                                <h4>Verktøy:</h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "tool"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
                                 })}
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 <h4>Fag : </h4>{" "}
-                                {article.Subjects!.map((subject, index) => {
+                                {article.Tags!.map((subject, index) => {
                                     return (
                                         <span key={index}>
                                             {subject.name},{" "}

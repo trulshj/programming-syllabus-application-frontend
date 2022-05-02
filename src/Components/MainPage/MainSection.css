@@ -1,7 +1,7 @@
 /* Home section */
 
 .home {
-    height: 100vh;
+    min-height: 100%;
     background-image: url(../../ntnu.jpg);
     background-size: cover;
     position: relative;
@@ -43,19 +43,6 @@
 .home .btn {
     min-width: 160px;
     padding: 15px 0;
-    border-radius: 5px;
-    border: 0;
-    cursor: pointer;
     font-size: 20px;
-    background-color: #6195ff;
-    color: #fff;
     margin-top: 50px;
-}
-
-.hover-opacity:hover {
-    opacity: 0.8;
-}
-
-.hover-opacity {
-    transition: opacity 0.2s;
 }

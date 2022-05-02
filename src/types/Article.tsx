@@ -8,40 +8,19 @@ export type Article = {
     viewCounter: number;
     createdAt: string;
     updatedAt: string;
-    Grades: Grade[];
-    Subjects: Subject[];
     Files: File[];
-    Images: Image[];
-    Themes: Theme[];
-    Tools: Tool[];
+    Tags: Tag[];
 };
 
 export type File = {
-    id: string;
+    id: number;
+    hash: string;
     name: string;
+    altText: string | undefined;
 };
 
-export type Image = {
-    fileId: string;
-    altText: string;
-};
-
-export type Subject = {
+export type Tag = {
     id: number;
     name: string;
-};
-
-export type Grade = {
-    id: number;
-    name: string;
-};
-
-export type Theme = {
-    id: number;
-    name: string;
-};
-
-export type Tool = {
-    id: number;
-    name: string;
+    tagType: "grade" | "subject" | "tool" | "theme";
 };
