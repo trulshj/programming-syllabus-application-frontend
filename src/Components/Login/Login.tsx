@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
-import { Form, Button, Row, Col, Image } from "react-bootstrap";
-import LoggImage from "../../LoggInn.jpg";
+import { Form, Button } from "react-bootstrap";
 import { UserStatusContext } from "../../App";
 import { login } from "../../api/userData.service";
 
@@ -20,7 +19,6 @@ const Login = (props) => {
                     localStorage.setItem("username", res.username);
                     localStorage.setItem("email", res.email);
                     localStorage.setItem("roleId", res.roleId.toString());
-                    localStorage.setItem("updatedAt", res.updatedAt.toString());
                     setUserStatus(true);
                     props.history.push("/");
                 }

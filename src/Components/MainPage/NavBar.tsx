@@ -34,25 +34,20 @@ export default function NavBar() {
                                 setSearch(e.target.value);
                             }}
                         />
-                        <Link to={"/search/" + search}>
+                        <Link to={"/articles"}>
                             <Button variant="outline-light">Søk</Button>
                         </Link>
                     </Form>
                     <Nav>
                         {userStatus[0] ? (
-                            <Nav.Link
-                                style={{ color: "#ffff" }}
-                                href="/usermeny"
-                            >
+                            <Nav.Link style={{ color: "#ffff" }} href="/user">
                                 {" "}
-                                HovedMeny
+                                Min bruker
                             </Nav.Link>
                         ) : null}
                         {userStatus[0] ? (
                             <Nav.Link onClick={logout}>Logg ut</Nav.Link>
                         ) : null}
-                    </Nav>
-                    <Nav>
                         {userStatus[0] ? null : (
                             <Nav.Link href="/registration">Ny bruker</Nav.Link>
                         )}

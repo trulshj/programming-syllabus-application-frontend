@@ -3,7 +3,6 @@ import { newArticle } from "../../api/article.service";
 import { Article } from "../../types/Article";
 
 const NewArticle = () => {
-    let image: globalThis.File | null;
     let tempFiles: FileList | null;
 
     let article: Article = {
@@ -27,14 +26,7 @@ const NewArticle = () => {
                     <Col>
                         <Form.Group controlId="imageControl">
                             <Form.Label>Last opp bilde :</Form.Label>
-                            <Form.Control
-                                type="file"
-                                onChange={(e) => {
-                                    image = ((
-                                        e.currentTarget as HTMLInputElement
-                                    ).files ?? [])[0];
-                                }}
-                            />
+                            <Form.Control type="file" />
                         </Form.Group>
 
                         <Form.Group controlId="fileControl">

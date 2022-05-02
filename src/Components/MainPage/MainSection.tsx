@@ -12,12 +12,12 @@ const MainSection: React.FC<Props> = ({ start }) => {
             <div className="overlay">
                 <div className="home-content">
                     <h1 className="home-title">
-                        Gi ditt bidrag for en bedre undervisningsopplegg
+                        Gi ditt bidrag for å hjelpe fremtidens utviklere!
                     </h1>
                     <div className="home-text">
-                        Inspirer deg av andres undervisningsopplegg
+                        La deg inspirere av andres undervisningsopplegg
                     </div>
-                    <Link to="/articlelist">
+                    <Link to="/articles">
                         <button className="btn hover-opacity" onClick={start}>
                             Utforsk
                         </button>

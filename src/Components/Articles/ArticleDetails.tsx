@@ -62,20 +62,45 @@ export default function ArticleDetails({ match }) {
                         <ListGroup variant="flush">
                             <ListGroup.Item>
                                 {" "}
-                                <h4>Oppgavetittel :</h4>
-                                <span>{article.title}</span>{" "}
+                                <h4>{article.title}</h4>{" "}
                             </ListGroup.Item>
                             <ListGroup.Item>
-                                <h4>Oppgavebeskrivelse :</h4>{" "}
-                                <span>{article.description}</span>
+                                <h5>{article.description}</h5>
                             </ListGroup.Item>
                             <ListGroup.Item>
                                 {" "}
-                                <h4>Fagkode : </h4>
-                                {article.Tags!.map((subject, index) => {
-                                    return (
-                                        <span key={index}>{subject.id}, </span>
-                                    );
+                                <h4>Klassetrinn : </h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "grade"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
+                                })}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                {" "}
+                                <h4>Fag: </h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "subject"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
+                                })}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                {" "}
+                                <h4>Tema:</h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "theme"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
+                                })}
+                            </ListGroup.Item>
+                            <ListGroup.Item>
+                                {" "}
+                                <h4>Verktøy:</h4>
+                                {article.Tags.filter(
+                                    (x) => x.tagType === "tool"
+                                ).map((tag, index) => {
+                                    return <span key={index}>{tag.name}</span>;
                                 })}
                             </ListGroup.Item>
                             <ListGroup.Item>

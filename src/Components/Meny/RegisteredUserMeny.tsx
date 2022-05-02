@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Button, Container } from "react-bootstrap";
 import { Link, BrowserRouter } from "react-router-dom";
-import "./RegisteredUserMeny.css";
 export default class RegisteredUserMeny extends Component {
     componentDidMount() {
         if (!localStorage.getItem("userId")) {
@@ -11,15 +10,10 @@ export default class RegisteredUserMeny extends Component {
     render() {
         return (
             <BrowserRouter>
-                <div className="parent">
-                    <Container>
+                <div className="py-5">
+                    <Container className="d-flex flex-column">
                         <Button
-                            style={{
-                                width: "50%",
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                marginTop: "5%",
-                            }}
+                            className="w-50 mx-auto my-4"
                             onClick={() => {
                                 window.location.href =
                                     "/articlelist/myarticles";
@@ -31,12 +25,7 @@ export default class RegisteredUserMeny extends Component {
                         </Button>
                         <Link to="/NewArticle">
                             <Button
-                                style={{
-                                    width: "50%",
-                                    marginLeft: "auto",
-                                    marginRight: "auto",
-                                    marginTop: "5%",
-                                }}
+                                className="w-50 mx-auto my-4"
                                 onClick={() => {
                                     window.location.href = "/NewArticle";
                                 }}
@@ -48,12 +37,7 @@ export default class RegisteredUserMeny extends Component {
                         </Link>
                         <Link to="/">
                             <Button
-                                style={{
-                                    width: "50%",
-                                    marginLeft: "auto",
-                                    marginRight: "auto",
-                                    marginTop: "5%",
-                                }}
+                                className="w-50 mx-auto my-4"
                                 onClick={() => {
                                     window.location.href = "/";
                                 }}

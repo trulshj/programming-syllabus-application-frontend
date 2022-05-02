@@ -24,26 +24,20 @@ const App: React.FC = () => {
                     <Switch>
                         <Route path="/" exact component={MainSection} />
                         <Route
-                            path="/articlelist"
+                            path="/articles"
                             exact
                             component={ArticlesList}
                         />
                         <Route path="/search/:id" component={ArticlesList} />
-                        <Route
-                            path="/articlelist/myarticles"
-                            component={ArticlesList}
-                        />
+                        <Route path="/user/articles" component={ArticlesList} />
                         <Route
                             path="/articlelist/:id"
                             component={ArticleDetails}
                         />
                         <Route path="/login" component={Login} />
-                        <Route path="/Registration" component={Registration} />
-                        <Route
-                            path="/usermeny"
-                            component={RegisteredUserMeny}
-                        />
-                        <Route path="/NewArticle" component={NewArticle} />
+                        <Route path="/registration" component={Registration} />
+                        <Route path="/user" component={RegisteredUserMeny} />
+                        <Route path="/articles/new" component={NewArticle} />
                     </Switch>
                 </UserStatusContext.Provider>
             </div>
