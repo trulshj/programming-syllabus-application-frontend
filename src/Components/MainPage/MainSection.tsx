@@ -1,6 +1,7 @@
 import React from "react";
 import "./MainSection.css";
 import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 type Props = {
     start: any;
@@ -18,9 +19,9 @@ const MainSection: React.FC<Props> = ({ start }) => {
                         La deg inspirere av andres undervisningsopplegg
                     </div>
                     <Link to="/articles">
-                        <button className="btn hover-opacity" onClick={start}>
+                        <Button className="btn-primary" onClick={start}>
                             Utforsk
-                        </button>
+                        </Button>
                     </Link>
                 </div>
             </div>

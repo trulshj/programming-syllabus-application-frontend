@@ -71,7 +71,12 @@ const NewArticle = () => {
                         >
                             Lagre
                         </Button>
-                        <Button variant="primary">Tilbake</Button>
+                        <Button
+                            variant="primary"
+                            onClick={() => window.history.back()}
+                        >
+                            Tilbake
+                        </Button>
                     </Col>
                     <Col>
                         <Form.Group>

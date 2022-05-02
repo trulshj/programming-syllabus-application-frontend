@@ -35,12 +35,11 @@ const Registration = (props) => {
         <div>
             <Row>
                 <Col>
-                    <h3 className="text-info">Lag ny bruker</h3>
-                    <hr />
+                    <h3>Lag ny bruker</h3>
                     <Alert variant="danger" hidden={!errorMessage}>
                         {errorMessage}
                     </Alert>
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit} className="col-md-6 mx-auto">
                         <Form.Group controlId="username">
                             <Form.Label style={{ float: "left" }}>
                                 Brukernavn
@@ -76,7 +75,11 @@ const Registration = (props) => {
                             </Form.Label>
                             <Form.Control type="password" required />
                         </Form.Group>
-                        <Button variant="primary" type="submit">
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            className="mt-5"
+                        >
                             Registrer Bruker
                         </Button>
                     </Form>
@@ -84,7 +87,7 @@ const Registration = (props) => {
             </Row>
             <Row className="py-4">
                 <Col>
-                    Har du allerede en konto <a href="/login">login her</a>
+                    Har du allerede en konto? <a href="/login">Logg inn her!</a>
                 </Col>
             </Row>
         </div>

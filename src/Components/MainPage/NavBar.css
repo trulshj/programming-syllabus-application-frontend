@@ -2,4 +2,5 @@
     width: 100%;
     z-index: 2;
     background-color: var(--blue);
+    border-bottom: 2px solid #e7e7ed;
 }

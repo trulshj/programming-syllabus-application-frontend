@@ -46,3 +46,10 @@ export const registration = async (
 
     return data?.status === 200 ? data.data : data?.error;
 };
+
+export async function getUser(userId: string) {
+    const endpoint = baseUrl + "users/" + userId;
+
+    const data = await axios.get<User>(endpoint);
+    return data.data;
+}
