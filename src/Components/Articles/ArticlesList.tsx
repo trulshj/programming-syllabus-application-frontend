@@ -1,5 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Card, Container, Button, Row, Col, Form, FormGroup } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import {
+    Card,
+    Container,
+    Button,
+    Row,
+    Col,
+    Form,
+    FormGroup,
+} from "react-bootstrap";
 import { Article } from "../../types/Article";
 import { Link } from "react-router-dom";
 import ntnu from "../../ntnu.jpg";
@@ -41,25 +49,35 @@ const ArticlesList = ({ match }) => {
             <Container fluid>
                 <Row>
                     {/* Filter column */}
-                    <Col className="filtercolumn" sm={3} md={3}>
+
+                    <Col className="filtercolumn" lg={3}>
                         <h1 className="mt-4 mb-5 font-weight-light">Filter</h1>
-                        <Form >
+                        <Form>
                             <FormGroup className="mb-5" controlId="yearControl">
                                 <Form.Label className="col-md-10 col-sm-10 lead">
                                     Årstrinn
                                 </Form.Label>
-                                <Form.Select className="col-md-10 col-sm-10 rounded font-weight-light" aria-label="Year">
+                                <Form.Select
+                                    className="col-md-10 col-sm-10 rounded font-weight-light"
+                                    aria-label="Year"
+                                >
                                     <option>Velg...</option>
                                     <option value="1">1.klasse</option>
                                     <option value="2">2.klasse</option>
                                     <option value="3">3.klasse</option>
                                 </Form.Select>
                             </FormGroup>
-                            <FormGroup className="mb-5" controlId="subjectControl">
+                            <FormGroup
+                                className="mb-5"
+                                controlId="subjectControl"
+                            >
                                 <Form.Label className="col-md-10 col-sm-10 lead">
                                     Fagområde
                                 </Form.Label>
-                                <Form.Select className="col-md-10 col-sm-10 rounded font-weight-light" aria-label="Subject" >
+                                <Form.Select
+                                    className="col-md-10 col-sm-10 rounded font-weight-light"
+                                    aria-label="Subject"
+                                >
                                     <option>Velg...</option>
                                     <option value="math">Matematikk</option>
                                     <option value="physics">Fysikk</option>
@@ -70,7 +88,10 @@ const ArticlesList = ({ match }) => {
                                 <Form.Label className="col-md-10 col-sm-10 lead">
                                     Verktøy
                                 </Form.Label>
-                                <Form.Select className="col-md-10 col-sm-10 rounded font-weight-light" aria-label="Tools">
+                                <Form.Select
+                                    className="col-md-10 col-sm-10 rounded font-weight-light"
+                                    aria-label="Tools"
+                                >
                                     <option>Velg...</option>
                                     <option value="python">Python</option>
                                     <option value="js">JavaScript</option>
@@ -81,66 +102,81 @@ const ArticlesList = ({ match }) => {
                                     Tidsbruk
                                 </Form.Label>
                                 <>
-                                    <Form.Range className="col-md-10 col-sm-10" aria-label="Time usage"/>
+                                    <Form.Range
+                                        className="col-md-10 col-sm-10"
+                                        aria-label="Time usage"
+                                    />
                                 </>
                             </FormGroup>
                         </Form>
                     </Col>
 
                     {/* Article column */}
-                    <Col className="border-left" sm={9} md={9}>
-                        <h1 className="mt-4 mb-5 font-weight-light">Undervisningsopplegg</h1>    
-                        {!articles
-                            ? null
-                            : articles.map((article, idx) => (
-                                <Row className="col-md-6 m-3" key={idx}>
-                                    <Card >
-                                        {
-                                            <Card.Img
-                                                variant={"top"}
-                                                src={
-                                                    article?.Images[0]
-                                                        ? "https://localhost:8080/api/file/" +
-                                                            article?.Images[0]
-                                                                .fileId
-                                                        : ntnu
-                                                }
-                                                alt={
-                                                    article?.Images[0]?.altText ??
-                                                    "ingen bilder for dette undervisningsopplegget"
-                                                }
-                                            />
-                                        }
-                                        <Card.Body>
-                                            <Card.Title aria-label="Card Title">
-                                                {article.title.substring(
-                                                    0,
-                                                    maxTitleLength
-                                                ) + " ..."}
-                                            </Card.Title>
-                                            <Card.Text>
-                                                {article.description.substring(
-                                                    0,
-                                                    maxDescriptionLength
-                                                ) + " ..."}
-                                            </Card.Text>
-                                            <Link
-                                                to={`/articlelist/${article.id}`}
-                                            >
-                                                <Button variant="primary" aria-label="Read more">
-                                                    Les mer
-                                                </Button>
-                                            </Link>
-                                        </Card.Body>
-                                        <Card.Footer>
-                                            <small className="text-muted">
-                                                Sist oppdatert{" "}
-                                                {getTimeDiff(article?.updatedAt)}
-                                            </small>
-                                        </Card.Footer>
-                                    </Card>
-                                </Row>
-                            ))}
+
+                    <Col className="border-left" lg={true}>
+                        <h1 className="mt-4 mb-5 font-weight-light">
+                            Undervisningsopplegg
+                        </h1>
+                        <Row>
+                            {!articles
+                                ? null
+                                : articles.map((article, idx) => (
+                                      <Col key={idx} xl={4} lg={6} md={12}>
+                                          <Card>
+                                              {
+                                                  <Card.Img
+                                                      variant={"top"}
+                                                      src={
+                                                          article?.Images[0]
+                                                              ? "https://localhost:8080/api/file/" +
+                                                                article
+                                                                    ?.Images[0]
+                                                                    .fileId
+                                                              : ntnu
+                                                      }
+                                                      alt={
+                                                          article?.Images[0]
+                                                              ?.altText ??
+                                                          "ingen bilder for dette undervisningsopplegget"
+                                                      }
+                                                  />
+                                              }
+                                              <Card.Body>
+                                                  <Card.Title aria-label="Card Title">
+                                                      {article.title.substring(
+                                                          0,
+                                                          maxTitleLength
+                                                      ) + " ..."}
+                                                  </Card.Title>
+                                                  <Card.Text>
+                                                      {article.description.substring(
+                                                          0,
+                                                          maxDescriptionLength
+                                                      ) + " ..."}
+                                                  </Card.Text>
+                                                  <Link
+                                                      to={`/articlelist/${article.id}`}
+                                                  >
+                                                      <Button
+                                                          variant="primary"
+                                                          aria-label="Read more"
+                                                      >
+                                                          Les mer
+                                                      </Button>
+                                                  </Link>
+                                              </Card.Body>
+                                              <Card.Footer>
+                                                  <small className="text-muted">
+                                                      Sist oppdatert{" "}
+                                                      {getTimeDiff(
+                                                          article?.updatedAt
+                                                      )}
+                                                  </small>
+                                              </Card.Footer>
+                                          </Card>
+                                      </Col>
+                                  ))}
+                        </Row>
                     </Col>
                 </Row>
             </Container>
