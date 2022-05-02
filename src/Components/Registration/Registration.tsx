@@ -1,126 +1,85 @@
-import { Form, Button, Row, Col, Image } from "react-bootstrap";
+import React, { useState } from "react";
+import { Form, Button, Row, Col, Alert } from "react-bootstrap";
 import { registration } from "../../api/userData.service";
-import LoggInn from "../../LoggInn.jpg";
 
 const Registration = (props) => {
-    let username: string = "";
-    let email: string = "";
-    let password: string = "";
-    let passwordConfirm: string = "";
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(
+        undefined
+    );
 
-    function keyDownEvent(event) {
-        //key 13 is enter-key
-        if (event.keyCode === 13) {
-            event.preventDefault();
-            if (username && email && password === passwordConfirm) {
-                registration(email, password, username)
-                    .then((res) => {
-                        props.history.push("/login");
-                    })
-                    .catch((error) => console.log("error", error));
-            } else {
-                console.log("registraion error");
-                console.log(username, email, password, passwordConfirm);
-            }
+    function handleSubmit(event) {
+        event.preventDefault();
+
+        const username = event.target.username.value;
+        const email = event.target.email.value;
+        const password = event.target.password.value;
+        const passwordConfirm = event.target.passwordConfirm.value;
+
+        if (!username || !email || password !== passwordConfirm) {
+            setErrorMessage("Passordene samsvarer ikke");
         }
+
+        registration(username, email, password)
+            .then((res) => {
+                setErrorMessage(undefined);
+                console.log(res);
+                props.history.push("/login");
+            })
+            .catch((err) => {
+                console.log(err);
+                setErrorMessage(err.message);
+            });
     }
 
     return (
         <div>
-            <br />
-            <br />
-            <br />
-
             <Row>
                 <Col>
                     <h3 className="text-info">Lag ny bruker</h3>
                     <hr />
-                    <Form
-                        onKeyDown={keyDownEvent}
-                        style={{
-                            width: "50%",
-                            marginLeft: "30%",
-                            marginTop: "5%",
-                        }}
-                    >
-                        <Form.Group>
+                    <Alert variant="danger" hidden={!errorMessage}>
+                        {errorMessage}
+                    </Alert>
+                    <Form onSubmit={handleSubmit}>
+                        <Form.Group controlId="username">
                             <Form.Label style={{ float: "left" }}>
                                 Brukernavn
                             </Form.Label>
                             <Form.Control
-                                onChange={(event) => {
-                                    username = event.target.value;
-                                }}
                                 type="text"
-                                name="name"
                                 placeholder="Ditt navn"
                                 required
                             />
                         </Form.Group>
 
-                        <Form.Group>
+                        <Form.Group controlId="email">
                             <Form.Label style={{ float: "left" }}>
-                                epost adresse
+                                Email
                             </Form.Label>
                             <Form.Control
-                                onChange={(event) => {
-                                    email = event.target.value;
-                                }}
                                 type="email"
-                                name="email"
-                                placeholder="Din epost"
+                                placeholder="eksempel@epost.no"
                                 required
                             />
                         </Form.Group>
 
-                        <Form.Group>
+                        <Form.Group controlId="password">
                             <Form.Label style={{ float: "left" }}>
                                 Passord
                             </Form.Label>
-                            <Form.Control
-                                type="password"
-                                name="password"
-                                placeholder="Passord"
-                                required
-                                onChange={(event) => {
-                                    password = event.target.value;
-                                }}
-                            />
+                            <Form.Control type="password" required />
                         </Form.Group>
 
-                        <Form.Group>
+                        <Form.Group controlId="passwordConfirm">
                             <Form.Label style={{ float: "left" }}>
-                                Bekrefte Passord
+                                Bekreft Passord
                             </Form.Label>
-                            <Form.Control
-                                type="password"
-                                name="confirmPass"
-                                placeholder="Bekreft Passord"
-                                required
-                                onChange={(event) => {
-                                    passwordConfirm = event.target.value;
-                                }}
-                            />
+                            <Form.Control type="password" required />
                         </Form.Group>
-                        <Button
-                            variant="primary"
-                            onClick={(e) => {
-                                keyDownEvent({
-                                    keyCode: 13,
-                                    preventDefault: () => {},
-                                });
-                            }}
-                        >
+                        <Button variant="primary" type="submit">
                             Registrer Bruker
                         </Button>
                     </Form>
-                </Col>
-                <Col>
-                    <Image
-                        src={LoggInn}
-                        thumbnail
-                        style={{ border: "none" }}
-                    ></Image>
                 </Col>
             </Row>
             <Row className="py-4">

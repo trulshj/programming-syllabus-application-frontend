@@ -9,101 +9,52 @@ const Login = (props) => {
     const setUserStatus = userStatus[1];
     const [error, setError] = useState(false);
 
-    let email = "";
-    let password = "";
+    function handleSubmit(event) {
+        event.preventDefault();
 
-    function handleKeyDown(event) {
-        //key 13 is enter-key
-        if (event.keyCode === 13) {
-            event.preventDefault();
-            login(email, password)
-                .then((res) => {
-                    if (res) {
-                        localStorage.setItem("userId", res.id);
-                        localStorage.setItem("username", res.username);
-                        localStorage.setItem("email", res.email);
-                        localStorage.setItem("roleId", res.roleId.toString());
-                        localStorage.setItem(
-                            "updatedAt",
-                            res.updatedAt.toString()
-                        );
-                        setUserStatus(true);
-                        props.history.push("/");
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    setError(true);
-                });
-        }
+        login(event.target.email.value, event.target.password.value)
+            .then((res) => {
+                console.log(res);
+                if (res) {
+                    localStorage.setItem("userId", res.id);
+                    localStorage.setItem("username", res.username);
+                    localStorage.setItem("email", res.email);
+                    localStorage.setItem("roleId", res.roleId.toString());
+                    localStorage.setItem("updatedAt", res.updatedAt.toString());
+                    setUserStatus(true);
+                    props.history.push("/");
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+                setError(true);
+            });
     }
 
     return (
         <div>
-            <br />
-            <br />
-            <br />
-            <Row>
-                <Col>
-                    <h3 className="text-info">Logg inn</h3>
-                    <Form
-                        onKeyDown={handleKeyDown}
-                        style={{
-                            width: "50%",
-                            marginLeft: "30%",
-                            marginTop: "10%",
-                        }}
-                    >
-                        <Form.Group controlId="formBasicEmail">
-                            <Form.Label style={{ float: "left" }}>
-                                Email address
-                            </Form.Label>
-                            <Form.Control
-                                type="email"
-                                onChange={(event) => {
-                                    email = event.target.value;
-                                }}
-                                placeholder="Email adresse"
-                            />
-                        </Form.Group>
+            <h3>Logg inn</h3>
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="email">
+                    <Form.Label style={{ float: "left" }}>Email</Form.Label>
+                    <Form.Control
+                        type="email"
+                        placeholder="eksempel@epost.no"
+                    />
+                </Form.Group>
 
-                        <Form.Group controlId="formBasicPassword">
-                            <Form.Label style={{ float: "left" }}>
-                                Passord
-                            </Form.Label>
-                            <Form.Control
-                                type="password"
-                                placeholder="Passord"
-                                onChange={(evnet) => {
-                                    password = evnet.target.value;
-                                }}
-                            />
-                            <div className="text-info" hidden={!error}>
-                                Feil epost eller passord
-                            </div>
-                        </Form.Group>
+                <Form.Group controlId="password">
+                    <Form.Label style={{ float: "left" }}>Passord</Form.Label>
+                    <Form.Control type="password" />
+                    <div className="text-info" hidden={!error}>
+                        Feil epost eller passord
+                    </div>
+                </Form.Group>
 
-                        <Button
-                            variant="primary"
-                            onClick={(e) => {
-                                handleKeyDown({
-                                    keyCode: 13,
-                                    preventDefault: () => {},
-                                });
-                            }}
-                        >
-                            Logg inn
-                        </Button>
-                    </Form>
-                </Col>
-                <Col>
-                    <Image
-                        src={LoggImage}
-                        thumbnail
-                        style={{ border: "none" }}
-                    ></Image>
-                </Col>
-            </Row>
+                <Button variant="primary" type="submit">
+                    Logg inn
+                </Button>
+            </Form>
         </div>
     );
 };

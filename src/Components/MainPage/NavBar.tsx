@@ -1,17 +1,9 @@
 import { useContext, useState } from "react";
-import {
-    Navbar,
-    Nav,
-    NavDropdown,
-    Form,
-    FormControl,
-    Button,
-    Row,
-    Col,
-} from "react-bootstrap";
+import { Navbar, Nav, Form, FormControl, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import "./NavBar.css";
 import { UserStatusContext } from "../../App";
+import { logout } from "../../api/userData.service";
 
 export default function NavBar() {
     const [search, setSearch] = useState("");
@@ -57,7 +49,7 @@ export default function NavBar() {
                             </Nav.Link>
                         ) : null}
                         {userStatus[0] ? (
-                            <Nav.Link href="/loggout">Logg ut</Nav.Link>
+                            <Nav.Link onClick={logout}>Logg ut</Nav.Link>
                         ) : null}
                     </Nav>
                     <Nav>
