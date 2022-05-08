@@ -26,9 +26,9 @@ export const logout = () => {
 };
 
 export const registration = async (
+    username: string,
     email: string,
-    password: string,
-    username: string
+    password: string
 ) => {
     const endpoint = baseUrl + "users";
 

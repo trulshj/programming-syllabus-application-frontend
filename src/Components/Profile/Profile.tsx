@@ -3,7 +3,7 @@ import { Button, Container } from "react-bootstrap";
 import { Link, BrowserRouter } from "react-router-dom";
 import { getUser } from "../../api/userData.service";
 import { User } from "../../types/User";
-export default function UserMenu() {
+export default function Profile() {
     const [user, setUser] = useState<User>();
 
     useEffect(() => {

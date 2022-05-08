@@ -3,6 +3,10 @@ body {
     font-family: "Open Sans", Arial, sans-serif;
 }
 
+html {
+    overflow-y: scroll;
+}
+
 * {
     font-family: inherit;
 }

@@ -1,25 +1,23 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Navbar, Nav, Form, FormControl, Button, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import "./NavBar.css";
 import { UserStatusContext } from "../../App";
 import { logout } from "../../api/userData.service";
 
 import ntnuLogo from "../../logo_ntnu.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 export default function NavBar() {
-    const [search, setSearch] = useState("");
-
-    // kode copied from
-    // https://stackoverflow.com/questions/45711927/how-to-avoid-submitting-in-the-form-of-react-bootstrap-validation-when-press-the
-    function keyDownEvent(event) {
-        //key 13 is enter-key
-        if (event.keyCode === 13) {
-            //event.preventDefault();
-        }
-    }
-
+    const history = useHistory();
     const userStatus = useContext(UserStatusContext);
+
+    function handleSubmit(e: any) {
+        e.preventDefault();
+
+        history.push(`/articles?search=${e.target.searchText.value}`);
+    }
 
     return (
         <div className="navBar">
@@ -29,18 +27,17 @@ export default function NavBar() {
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse className="justify-content-end">
-                    <Form onKeyDown={keyDownEvent} className="d-flex">
+                    <Form onSubmit={handleSubmit} className="d-flex">
                         <FormControl
+                            id="searchText"
+                            name="searchText"
                             type="text"
                             placeholder="Søk"
                             className="mr-sm-2"
-                            onChange={(e) => {
-                                setSearch(e.target.value);
-                            }}
                         />
-                        <Link to={"/articles"}>
-                            <Button>Søk</Button>
-                        </Link>
+                        <Button type="submit">
+                            <FontAwesomeIcon icon={faMagnifyingGlass} />
+                        </Button>
                     </Form>
                     <Nav className="ml-sm-5">
                         {userStatus[0] ? (

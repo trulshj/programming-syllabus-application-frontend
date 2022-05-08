@@ -1,5 +1,5 @@
 import React from "react";
-import "./MainSection.css";
+import "./Home.css";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
@@ -7,7 +7,7 @@ type Props = {
     start: any;
 };
 
-const MainSection: React.FC<Props> = ({ start }) => {
+const Home: React.FC<Props> = ({ start }) => {
     return (
         <div className="home">
             <div className="overlay">
@@ -29,4 +29,4 @@ const MainSection: React.FC<Props> = ({ start }) => {
     );
 };
 
-export default MainSection;
+export default Home;

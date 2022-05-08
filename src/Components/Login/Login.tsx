@@ -1,12 +1,13 @@
 import { useContext, useState } from "react";
 import { Form, Button, Row, Col } from "react-bootstrap";
-import { UserStatusContext } from "../../App";
 import { login } from "../../api/userData.service";
+import { UserStatusContext } from "../../App";
 
 const Login = (props) => {
     const userStatus = useContext(UserStatusContext);
     const setUserStatus = userStatus[1];
     const [error, setError] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -35,7 +36,7 @@ const Login = (props) => {
                 <Col>
                     <h3>Logg inn</h3>
                     <Form onSubmit={handleSubmit} className="col-md-6 mx-auto">
-                        <Form.Group controlId="email">
+                        <Form.Group className="mb-3" controlId="email">
                             <Form.Label style={{ float: "left" }}>
                                 Email
                             </Form.Label>
@@ -44,15 +45,25 @@ const Login = (props) => {
                                 placeholder="eksempel@epost.no"
                             />
                         </Form.Group>
+
                         <Form.Group controlId="password">
                             <Form.Label style={{ float: "left" }}>
-                                Passord
+                                Passord{" "}
+                                <span
+                                    onMouseEnter={() => setShowPassword(true)}
+                                    onMouseLeave={() => setShowPassword(false)}
+                                >
+                                    {showPassword ? "🙈" : "👁️"}
+                                </span>
                             </Form.Label>
-                            <Form.Control type="password" />
+                            <Form.Control
+                                type={showPassword ? "text" : "password"}
+                            />
                             <div className="text-info" hidden={!error}>
                                 Feil epost eller passord
                             </div>
                         </Form.Group>
+
                         <Button
                             variant="primary"
                             type="submit"
