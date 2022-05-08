@@ -7,10 +7,9 @@ const articlesUrl = baseUrl + "articles";
 export const fetchArticles = async () => {
     const data = await axios
         .get<Article[]>(articlesUrl)
-        .catch((error) => console.error(error));
+        .catch((err) => console.error(err));
 
     if (data) {
-        console.log(data.data);
         return data.data;
     }
 
@@ -19,9 +18,7 @@ export const fetchArticles = async () => {
 
 export const searchArticles = async (searchString: string) => {
     const data = await axios
-        .get<Article[]>(articlesUrl, {
-            headers: { query: searchString },
-        })
+        .get<Article[]>(articlesUrl + searchString)
         .catch((error) => {
             console.error(error);
         });
@@ -33,11 +30,11 @@ export const searchArticles = async (searchString: string) => {
 };
 
 export const fetchArticlesByUser = async (userId: string) => {
-    const endpoint = `${baseUrl}/users/${userId}/articles`;
+    const endpoint = `${baseUrl}users/${userId}/articles`;
 
     let data = await axios
         .get<Article[]>(endpoint)
-        .catch((error) => console.error(error));
+        .catch((err) => console.error(err));
 
     return data?.data ?? [];
 };
@@ -51,7 +48,7 @@ export const newArticle = async (article, files) => {
 
     response = await axios
         .post(articlesUrl, requestBody)
-        .catch((error: any) => console.error("api newArticle:", error));
+        .catch((err) => console.error("api newArticle:", err));
 
     return response?.status === 200;
 };
@@ -63,6 +60,6 @@ export const fetchArticle = async (id, userId) => {
                 user_id: userId,
             },
         })
-        .catch((err: any) => console.error("Error fetchArticle", err));
+        .catch((err) => console.error("Error fetchArticle", err));
     return data?.status === 200 ? data.data : undefined;
 };

@@ -1,24 +1,15 @@
-import { useEffect, useState } from "react";
-import {
-    Card,
-    Container,
-    Button,
-    Row,
-    Col,
-    Form,
-    FormGroup,
-} from "react-bootstrap";
+import { useCallback, useEffect, useState } from "react";
+import { Container, Row, Col, Form, FormGroup } from "react-bootstrap";
 import { Article, Tag } from "../../types/Article";
-import { Link } from "react-router-dom";
-import ntnu from "../../ntnu.jpg";
 import "./ArticlesList.css";
 import {
     fetchArticles,
     fetchArticlesByUser,
     searchArticles,
 } from "../../api/article.service";
-import { getTimeDiff } from "../../lib/Helpers";
 import { fetchTags } from "../../api/tag.service";
+import ArticleCard from "./ArticleCard";
+import { compareAges, compareTitles } from "../../lib/helpers";
 
 const ArticlesList = ({ match }) => {
     const [articles, setArticles] = useState<Article[]>([]);
@@ -28,14 +19,7 @@ const ArticlesList = ({ match }) => {
     const [grades, setGrades] = useState<Tag[]>([]);
     const [tools, setTools] = useState<Tag[]>([]);
 
-    const maxTitleLength = 30;
-    const maxDescriptionLength = 175;
-
-    const cutString = (maxLength: number, str: string) => {
-        return (
-            str.substring(0, maxLength) + (str.length > maxLength ? " ..." : "")
-        );
-    };
+    const [loaded, setLoaded] = useState(false);
 
     const handleFilter = (event) => {
         event.preventDefault();
@@ -47,16 +31,69 @@ const ArticlesList = ({ match }) => {
         const toolFilter = parseInt(event.currentTarget.toolControl.value);
 
         setFilteredArticles(
-            articles.filter(
-                (x) =>
-                    (gradeFilter === -1 ||
-                        x.Tags.some((t) => t.id === gradeFilter)) &&
-                    (subjectFilter === -1 ||
-                        x.Tags.some((t) => t.id === subjectFilter)) &&
-                    (toolFilter === -1 ||
-                        x.Tags.some((t) => t.id === toolFilter))
-            )
+            filterArticles(articles, gradeFilter, subjectFilter, toolFilter)
         );
+    };
+
+    const filterArticles = (
+        articles: Article[],
+        gradeFilter: number = -1,
+        subjectFilter: number = -1,
+        toolFilter: number = -1
+    ) => {
+        return articles.filter(
+            (x) =>
+                (gradeFilter === -1 ||
+                    x.Tags.some((t) => t.id === gradeFilter)) &&
+                (subjectFilter === -1 ||
+                    x.Tags.some((t) => t.id === subjectFilter)) &&
+                (toolFilter === -1 || x.Tags.some((t) => t.id === toolFilter))
+        );
+    };
+
+    const handleSort = (event: any) => {
+        const sortedArticles = sortArticles(articles, event.target.value);
+
+        const sortedFilteredArticles = sortArticles(
+            filteredArticles,
+            event.target.value
+        );
+
+        setArticles(sortedArticles);
+        setFilteredArticles(sortedFilteredArticles);
+    };
+
+    const sortArticles = (
+        articles: Article[],
+        sortingDirection: "age-old" | "age-new" | "title-az" | "title-za"
+    ) => {
+        let compareFunction: (a: Article, b: Article) => number;
+        let reverse: boolean;
+
+        switch (sortingDirection) {
+            case "age-old":
+                compareFunction = compareAges;
+                reverse = true;
+                break;
+            case "age-new":
+                compareFunction = compareAges;
+                reverse = false;
+                break;
+            case "title-za":
+                compareFunction = compareTitles;
+                reverse = true;
+                break;
+            default:
+                compareFunction = compareTitles;
+                reverse = false;
+        }
+        let sortedArticles = [...articles].sort(compareFunction);
+
+        if (reverse) {
+            return sortedArticles.reverse();
+        }
+
+        return sortedArticles;
     };
 
     useEffect(() => {
@@ -68,30 +105,33 @@ const ArticlesList = ({ match }) => {
             });
 
             let newArticles: Article[];
-            // deciding the type of articles
-            if (window.location.pathname === "/articlelist/myarticles") {
+
+            if (window.location.pathname === "/user/articles") {
                 newArticles = await fetchArticlesByUser(
                     localStorage.getItem("userId") || ""
                 );
-            } else if (window.location.pathname.startsWith("/search/")) {
-                //searching for articles
-                newArticles = await searchArticles(match.params.id);
+            } else if (window.location.search) {
+                newArticles = await searchArticles(window.location.search);
             } else {
-                //regular article list view
                 newArticles = await fetchArticles();
             }
-            setArticles(newArticles);
-            setFilteredArticles(newArticles);
+
+            let sortedArticles = sortArticles(newArticles, "title-az");
+
+            setArticles(sortedArticles);
+            setFilteredArticles(sortedArticles);
+
+            setLoaded(true);
         }
         fetchData();
-    }, [match.params.id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [match.params.id, loaded, window.location.search]);
 
     return (
         <div>
             <Container fluid>
                 <Row>
                     {/* Filter column */}
-
                     <Col className="filtercolumn" lg={3}>
                         <h1 className="mt-4 mb-5 font-weight-light">Filter</h1>
                         <Form onChange={handleFilter}>
@@ -172,59 +212,37 @@ const ArticlesList = ({ match }) => {
                         <h1 className="mt-4 mb-5 font-weight-light">
                             Undervisningsopplegg
                         </h1>
-                        <Row>
+                        <div className="sortingBar w-100 text-left">
+                            <FormGroup>
+                                <Form.Label className="lead mr-2">
+                                    Sortering
+                                </Form.Label>
+                                <Form.Select onChange={handleSort}>
+                                    <option value="title-az">
+                                        Tittel A til Å
+                                    </option>
+                                    <option value="title-za">
+                                        Tittel Å til A
+                                    </option>
+                                    {/*<option value="age-new">
+                                        Nyeste først
+                                    </option>
+                                    <option value="age-old">
+                                        Eldste først
+                                    </option>*/}
+                                </Form.Select>
+                            </FormGroup>
+                        </div>
+                        <Row className="mt-3">
                             {filteredArticles.map((article, idx) => (
-                                <Col key={idx} xl={4} lg={6} md={12}>
-                                    <Card>
-                                        {
-                                            <Card.Img
-                                                variant={"top"}
-                                                src={
-                                                    article?.Files[0]
-                                                        ? "https://localhost:8080/files/" +
-                                                          article.Files[0].id
-                                                        : ntnu
-                                                }
-                                                alt={
-                                                    article?.Files[0]
-                                                        ?.altText ??
-                                                    "ingen bilder for dette undervisningsopplegget"
-                                                }
-                                            />
-                                        }
-                                        <Card.Body>
-                                            <Card.Title aria-label="Card Title">
-                                                {cutString(
-                                                    maxTitleLength,
-                                                    article.title
-                                                )}
-                                            </Card.Title>
-                                            <Card.Text>
-                                                {cutString(
-                                                    maxDescriptionLength,
-                                                    article.description
-                                                )}
-                                            </Card.Text>
-                                            <Link
-                                                to={`/articlelist/${article.id}`}
-                                            >
-                                                <Button
-                                                    variant="primary"
-                                                    aria-label="Read more"
-                                                >
-                                                    Les mer
-                                                </Button>
-                                            </Link>
-                                        </Card.Body>
-                                        <Card.Footer>
-                                            <small className="text-muted">
-                                                Sist oppdatert{" "}
-                                                {getTimeDiff(
-                                                    article?.updatedAt
-                                                )}
-                                            </small>
-                                        </Card.Footer>
-                                    </Card>
+                                <Col
+                                    key={idx}
+                                    xl={4}
+                                    lg={6}
+                                    md={12}
+                                    className="mb-3"
+                                >
+                                    <ArticleCard article={article} />
                                 </Col>
                             ))}
                         </Row>

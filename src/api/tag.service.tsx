@@ -10,7 +10,6 @@ export const fetchTags = async () => {
         .catch((error) => console.error(error));
 
     if (data) {
-        console.log(data.data);
         return data.data;
     }
 
