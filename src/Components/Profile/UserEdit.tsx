@@ -33,6 +33,14 @@ export default function UserEdit() {
         event.preventDefault();
 
         if (!user?.id) {
+            console.error("No userId, cannot update user");
+            return;
+        }
+
+        if (
+            event.target.password.value !== event.target.passwordConfirm.value
+        ) {
+            console.error("Passwords don't match");
             return;
         }
 

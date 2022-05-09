@@ -19,7 +19,6 @@ const Registration = (props) => {
 
     function validatePassword(event: any) {
         const password = event.target.value;
-        console.log(event.target.value);
 
         const currValidations = [
             password.length > 5,
@@ -54,11 +53,10 @@ const Registration = (props) => {
         registration(username, email, password)
             .then((res) => {
                 setErrorMessage(undefined);
-                console.log(res);
                 props.history.push("/login");
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 setErrorMessage(err.message);
             });
     }

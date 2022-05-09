@@ -14,7 +14,6 @@ const Login = (props) => {
 
         login(event.target.email.value, event.target.password.value)
             .then((res) => {
-                console.log(res);
                 if (res) {
                     localStorage.setItem("userId", res.id);
                     localStorage.setItem("username", res.username);

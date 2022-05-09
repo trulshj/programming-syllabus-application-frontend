@@ -61,17 +61,10 @@ export async function updateUser(
     newPassword: string | undefined
 ) {
     const endpoint = BASE_API_URL + "users/" + userId;
-    const data = await axios.put<
-        {
-            newUsername: string | undefined;
-            newEmail: string | undefined;
-            newPassword: string | undefined;
-        },
-        AxiosResponse<User>
-    >(endpoint, {
+    const data = await axios.put(endpoint, {
         newUsername: newUsername,
         newEmail: newEmail,
-        newPassword: newPassword,
+        newPassword: newPassword === "" ? undefined : newPassword,
     });
     return data.data;
 }
