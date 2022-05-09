@@ -10,19 +10,20 @@ interface ArticleCardProps {
 }
 
 export default function ArticleCard({ article }: ArticleCardProps) {
+    const thumbnail = article.Files.find((x) => x.altText);
+
     return (
         <Card className="h-100">
             {
                 <Card.Img
                     variant={"top"}
                     src={
-                        article?.Files[0]
-                            ? "https://localhost:8080/files/" +
-                              article.Files[0].id
+                        thumbnail
+                            ? "https://localhost:8080/files/" + thumbnail.id
                             : ntnu
                     }
                     alt={
-                        article?.Files[0]?.altText ??
+                        thumbnail?.altText ??
                         "ingen bilder for dette undervisningsopplegget"
                     }
                 />
