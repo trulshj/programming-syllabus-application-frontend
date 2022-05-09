@@ -1,5 +1,7 @@
-.navbar {
+.navBar {
     width: 100%;
-    z-index: 2;
+    z-index: 100;
     border-bottom: 2px solid #e7e7ed;
+    position: fixed;
+    top: 0;
 }

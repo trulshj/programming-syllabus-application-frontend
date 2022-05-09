@@ -1,6 +1,6 @@
 import { Article } from "../../types/Article";
 import ntnu from "../../ntnu.jpg";
-import { maxDescriptionLength, maxTitleLength } from "../../lib/config";
+import { MAX_DESCRIPTION_LENGTH, MAX_TITLE_LENGTH } from "../../lib/config";
 import { cutString, getTimeDiff } from "../../lib/helpers";
 import { Button, Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
@@ -29,12 +29,12 @@ export default function ArticleCard({ article }: ArticleCardProps) {
             }
             <Card.Body>
                 <Card.Title aria-label="Card Title">
-                    {cutString(maxTitleLength, article.title)}
+                    {cutString(MAX_TITLE_LENGTH, article.title)}
                 </Card.Title>
                 <Card.Text>
-                    {cutString(maxDescriptionLength, article.description)}
+                    {cutString(MAX_DESCRIPTION_LENGTH, article.description)}
                 </Card.Text>
-                <Link to={`/articlelist/${article.id}`}>
+                <Link to={`/articles/${article.id}`}>
                     <Button variant="primary" aria-label="Read more">
                         Les mer
                     </Button>

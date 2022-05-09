@@ -1,9 +1,9 @@
-import { baseUrl } from "./baseApi";
+import { BASE_API_URL } from "../lib/config";
 import axios, { AxiosResponse } from "axios";
 import { User } from "../types/User";
 
 export const login = async (email: string, password: string) => {
-    const endpoint = baseUrl + "login";
+    const endpoint = BASE_API_URL + "login";
 
     let data: any = await axios
         .post<{ email: string; password: string }, AxiosResponse<User>>(
@@ -30,7 +30,7 @@ export const registration = async (
     email: string,
     password: string
 ) => {
-    const endpoint = baseUrl + "users";
+    const endpoint = BASE_API_URL + "users";
 
     if (!email || !password || !username) {
     }
@@ -48,8 +48,30 @@ export const registration = async (
 };
 
 export async function getUser(userId: string) {
-    const endpoint = baseUrl + "users/" + userId;
+    const endpoint = BASE_API_URL + "users/" + userId;
 
     const data = await axios.get<User>(endpoint);
+    return data.data;
+}
+
+export async function updateUser(
+    userId: string,
+    newUsername: string | undefined,
+    newEmail: string | undefined,
+    newPassword: string | undefined
+) {
+    const endpoint = BASE_API_URL + "users/" + userId;
+    const data = await axios.put<
+        {
+            newUsername: string | undefined;
+            newEmail: string | undefined;
+            newPassword: string | undefined;
+        },
+        AxiosResponse<User>
+    >(endpoint, {
+        newUsername: newUsername,
+        newEmail: newEmail,
+        newPassword: newPassword,
+    });
     return data.data;
 }

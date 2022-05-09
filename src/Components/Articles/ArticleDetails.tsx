@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { Article } from "../../types/Article";
-import { Container, Col, Row, Image, ListGroup } from "react-bootstrap";
-import "./ArticleDetails.css";
+import { Article, File } from "../../types/Article";
+import { Container, Col, Row, Image, Button } from "react-bootstrap";
 import ntnu from "../../ntnu.jpg";
 import { fetchArticle } from "../../api/article.service";
+import { BASE_API_URL } from "../../lib/config";
+import { formatTime, getTimeDiff } from "../../lib/helpers";
+import ArticleTags from "./ArticleTags";
+import { Link } from "react-router-dom";
 
 export default function ArticleDetails({ match }) {
-    const fileAPI = "https://localhost:8080/files/";
     const [article, setArticle] = useState<Article>({
-        id: 0,
+        id: -1,
         title: "",
         authorId: "",
         description: "",
@@ -21,102 +23,108 @@ export default function ArticleDetails({ match }) {
         updatedAt: "",
     });
 
+    const [thumbnail, setThumbnail] = useState<File>();
+    const [userId, setUserId] = useState<string>();
+
     useEffect(() => {
         async function fetchData() {
-            try {
-                await fetchArticle(
-                    match.params.id,
-                    localStorage.getItem("userId")
-                ).then((newArticle) => setArticle(newArticle));
-            } catch (error) {
-                console.log("fetch article error:", error);
-            }
+            setUserId(localStorage.getItem("userId") ?? "");
+            fetchArticle(match.params.id, localStorage.getItem("userId") ?? "")
+                .then((newArticle) => {
+                    setArticle(newArticle);
+
+                    const newThumbnail = newArticle.Files.find(
+                        (x) => x.altText != null
+                    );
+                    setThumbnail(newThumbnail);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
         }
         fetchData();
     }, [match.params.id]);
 
     return (
-        <div>
-            <h1 key={article.id}> </h1>
-            <Container fluid>
-                <Row className="row">
-                    <Col className="col" xs={4} md={4}>
+        <>
+            <Container fluid className="w-100 px-3 mt-5">
+                <Row>
+                    <Col md={4} sm={12}>
                         {
                             <Image
                                 className="image"
                                 src={
-                                    article?.Files[0]
-                                        ? fileAPI + article.Files[0].id
+                                    thumbnail
+                                        ? `${BASE_API_URL}files/${thumbnail.id}`
                                         : ntnu
                                 }
                                 alt={
-                                    article?.Files[0]
-                                        ? article.Files[0].altText
+                                    thumbnail
+                                        ? thumbnail.altText
                                         : "ingen bilder for dette undervisningsopplegget"
                                 }
                                 rounded
+                                fluid
                             />
                         }
                     </Col>
-                    <Col xs={6} md={6}>
-                        <ListGroup variant="flush">
-                            <ListGroup.Item>
-                                {" "}
-                                <h4>{article.title}</h4>{" "}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <h5>{article.description}</h5>
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {" "}
-                                <h4>Klassetrinn : </h4>
-                                {article.Tags.filter(
-                                    (x) => x.tagType === "grade"
-                                ).map((tag, index) => {
-                                    return <span key={index}>{tag.name}</span>;
-                                })}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {" "}
-                                <h4>Fag: </h4>
-                                {article.Tags.filter(
-                                    (x) => x.tagType === "subject"
-                                ).map((tag, index) => {
-                                    return <span key={index}>{tag.name}</span>;
-                                })}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {" "}
-                                <h4>Tema:</h4>
-                                {article.Tags.filter(
-                                    (x) => x.tagType === "theme"
-                                ).map((tag, index) => {
-                                    return <span key={index}>{tag.name}</span>;
-                                })}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                {" "}
-                                <h4>Verktøy:</h4>
-                                {article.Tags.filter(
-                                    (x) => x.tagType === "tool"
-                                ).map((tag, index) => {
-                                    return <span key={index}>{tag.name}</span>;
-                                })}
-                            </ListGroup.Item>
-                            <ListGroup.Item>
-                                <h4>Fag : </h4>{" "}
-                                {article.Tags!.map((subject, index) => {
-                                    return (
-                                        <span key={index}>
-                                            {subject.name},{" "}
-                                        </span>
-                                    );
-                                })}
-                            </ListGroup.Item>
-                        </ListGroup>
+                    <Col md={8} sm={12} className="text-left mt-3 mt-md-0">
+                        <div
+                            id="dates"
+                            className="w-100 d-flex justify-content-between text-muted"
+                        >
+                            <span>
+                                Publisert: {formatTime(article.createdAt)}
+                            </span>
+                            <span>
+                                Sist oppdatert: {getTimeDiff(article.updatedAt)}
+                            </span>
+                        </div>
+
+                        <h1 className="text-center">{article.title}</h1>
+
+                        <div id="description">
+                            <h3>Beskrivelse:</h3>
+                            <p className="mx-3">{article.description}</p>
+                        </div>
+
+                        <hr />
+
+                        <div id="files">
+                            <h3>Filer:</h3>
+                            <ul>
+                                {article.Files.map((file) => (
+                                    <li key={file.id}>
+                                        <a
+                                            href={`${BASE_API_URL}files/${file.id}`}
+                                            download
+                                        >
+                                            {file.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <hr />
+
+                        <ArticleTags tags={article.Tags} />
+
+                        {article.authorId !== userId ? null : (
+                            <>
+                                <hr />
+                                <div className="w-100">
+                                    <Link to={`/articles/${article.id}/edit`}>
+                                        <Button className="mx-auto">
+                                            Rediger
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </>
+                        )}
                     </Col>
                 </Row>
             </Container>
-        </div>
+        </>
     );
 }

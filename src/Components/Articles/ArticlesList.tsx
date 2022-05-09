@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Row, Col, Form, FormGroup } from "react-bootstrap";
 import { Article, Tag } from "../../types/Article";
 import "./ArticlesList.css";

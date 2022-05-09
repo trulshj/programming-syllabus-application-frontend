@@ -30,30 +30,18 @@ export default function Profile() {
                 </Container>
                 <Container className="d-flex flex-column">
                     <Link to="/user/articles">
-                        <Button
-                            className="w-50 mx-auto my-4"
-                            variant="secondary"
-                            size="lg"
-                        >
+                        <Button className="w-50 mx-auto my-4" size="lg">
                             Mine undervisningsopplegg
                         </Button>
                     </Link>
                     <Link to="/articles/new">
-                        <Button
-                            className="w-50 mx-auto my-4"
-                            variant="secondary"
-                            size="lg"
-                        >
+                        <Button className="w-50 mx-auto my-4" size="lg">
                             Lag et nytt undervisningsopplegg
                         </Button>
                     </Link>
-                    <Link to="/">
-                        <Button
-                            className="w-50 mx-auto my-4"
-                            variant="secondary"
-                            size="lg"
-                        >
-                            Til Hovedsiden
+                    <Link to="/user/edit">
+                        <Button className="w-50 mx-auto my-4" size="lg">
+                            Rediger bruker
                         </Button>
                     </Link>
                 </Container>

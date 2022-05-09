@@ -20,62 +20,51 @@ export default function NavBar() {
     }
 
     return (
-        <div className="navBar">
-            <Navbar collapseOnSelect expand="md" bg="white">
-                <Navbar.Brand href="/">
-                    <Image src={ntnuLogo} fluid></Image>
-                </Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse className="justify-content-end">
-                    <Form
-                        onSubmit={handleSubmit}
-                        className="d-flex mt-3 mt-md-0"
-                    >
-                        <FormControl
-                            id="searchText"
-                            name="searchText"
-                            type="text"
-                            placeholder="Søk"
-                            className="mr-sm-2"
-                        />
-                        <Button type="submit">
-                            <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        </Button>
-                    </Form>
-                    <Nav className="ml-sm-5">
-                        {userStatus[0] ? (
-                            <Nav.Link href="/user" className="font-weight-bold">
-                                {" "}
-                                Min bruker
-                            </Nav.Link>
-                        ) : null}
-                        {userStatus[0] ? (
-                            <Nav.Link
-                                onClick={logout}
-                                className="font-weight-bold"
-                            >
-                                Logg ut
-                            </Nav.Link>
-                        ) : null}
-                        {userStatus[0] ? null : (
-                            <Nav.Link
-                                href="/registration"
-                                className="font-weight-bold"
-                            >
-                                Ny bruker
-                            </Nav.Link>
-                        )}
-                        {userStatus[0] ? null : (
-                            <Nav.Link
-                                href="/login"
-                                className="font-weight-bold"
-                            >
-                                Logg inn{" "}
-                            </Nav.Link>
-                        )}
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-        </div>
+        <Navbar collapseOnSelect expand="md" bg="white" className="navBar">
+            <Navbar.Brand href="/">
+                <Image src={ntnuLogo} fluid></Image>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+            <Navbar.Collapse className="justify-content-end">
+                <Form onSubmit={handleSubmit} className="d-flex mt-3 mt-md-0">
+                    <FormControl
+                        id="searchText"
+                        name="searchText"
+                        type="text"
+                        placeholder="Søk på opplegg"
+                        className="mr-sm-2"
+                    />
+                    <Button type="submit">
+                        <FontAwesomeIcon icon={faMagnifyingGlass} />
+                    </Button>
+                </Form>
+                <Nav className="ml-sm-5">
+                    {userStatus[0] ? (
+                        <Nav.Link href="/user" className="font-weight-bold">
+                            {" "}
+                            Min bruker
+                        </Nav.Link>
+                    ) : null}
+                    {userStatus[0] ? (
+                        <Nav.Link onClick={logout} className="font-weight-bold">
+                            Logg ut
+                        </Nav.Link>
+                    ) : null}
+                    {userStatus[0] ? null : (
+                        <Nav.Link
+                            href="/registration"
+                            className="font-weight-bold"
+                        >
+                            Ny bruker
+                        </Nav.Link>
+                    )}
+                    {userStatus[0] ? null : (
+                        <Nav.Link href="/login" className="font-weight-bold">
+                            Logg inn{" "}
+                        </Nav.Link>
+                    )}
+                </Nav>
+            </Navbar.Collapse>
+        </Navbar>
     );
 }

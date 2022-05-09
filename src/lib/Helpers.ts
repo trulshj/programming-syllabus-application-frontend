@@ -19,6 +19,11 @@ export function getTimeDiff(input: string) {
     return diffMinues.toString().split(".")[0] + " minutter siden";
 }
 
+export const formatTime = (timeString: string) => {
+    const date = new Date(timeString);
+    return date.toLocaleDateString("nb-NO");
+};
+
 export const cutString = (maxLength: number, str: string) => {
     return str.substring(0, maxLength) + (str.length > maxLength ? " ..." : "");
 };

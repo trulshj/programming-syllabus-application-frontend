@@ -1,405 +1,236 @@
+import { useEffect, useRef, useState } from "react";
 import { Form, Row, Col, Container, Button } from "react-bootstrap";
-import { newArticle } from "../../api/article.service";
-import { Article } from "../../types/Article";
+import { useHistory, useParams } from "react-router-dom";
+import {
+    createNewArticle,
+    fetchArticle,
+    updateArticle,
+} from "../../api/article.service";
+import { fetchTags } from "../../api/tag.service";
+import { BASE_API_URL } from "../../lib/config";
+import { Article, Tag } from "../../types/Article";
+import "./NewArticle.css";
 
 const NewArticle = () => {
-    let tempFiles: FileList | null;
+    const formRef = useRef<HTMLFormElement>(null);
+    const history = useHistory();
+    const { id } = useParams<{ id: string }>();
 
-    let article: Article = {
-        id: 0,
-        title: "",
-        authorId: localStorage.getItem("userId") || "",
-        description: "",
-        timeToComplete: 10,
-        Files: [],
-        Tags: [],
-        published: false,
-        viewCounter: 0,
-        createdAt: "",
-        updatedAt: "",
+    const [loaded, setLoaded] = useState(false);
+
+    const [files, setFiles] = useState<FileList>();
+    const [thumbnail, setThumbnail] = useState<FileList>();
+
+    const [activeTags, setActiveTags] = useState<number[]>([]);
+    const [tags, setTags] = useState<Tag[]>([]);
+    const [subjects, setSubjects] = useState<Tag[]>([]);
+    const [grades, setGrades] = useState<Tag[]>([]);
+    const [tools, setTools] = useState<Tag[]>([]);
+
+    const handleCheckboxChange = (event: any) => {
+        if (event.target.checked) {
+            setActiveTags([...activeTags, parseInt(event.target.id)]);
+        } else {
+            setActiveTags(
+                activeTags.filter((x) => x !== parseInt(event.target.id))
+            );
+        }
     };
+
+    const handleSubmit = (event: any) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+
+        const article: Partial<Article> = {
+            id: parseInt(id ?? -1),
+            title: event.target.title.value,
+            description: event.target.description.value,
+            authorId: localStorage.getItem("userId") || "",
+            Tags: tags.filter((x) => activeTags.includes(x.id)),
+        };
+
+        formData.append("body", JSON.stringify(article));
+
+        if (files) {
+            for (let i = 0; i < (files?.length ?? 0); i++) {
+                formData.append(`file`, files[i], files[i].name);
+            }
+        }
+
+        if (thumbnail) {
+            formData.append("thumbnail", thumbnail[0], thumbnail[0].name);
+        }
+
+        if (id) {
+            updateArticle(id, formData).then((res) => {
+                if (res) {
+                    history.push(`/articles/${res.id}`);
+                } else {
+                    console.error("Could not update article");
+                }
+            });
+        } else {
+            createNewArticle(formData).then((res) => {
+                if (res) {
+                    history.push(`/articles/${res.id}`);
+                } else {
+                    console.error("Could not create article");
+                }
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (loaded) {
+            return;
+        }
+
+        async function fetchData() {
+            fetchTags().then((res) => {
+                setTags(res);
+                setGrades(res.filter((x) => x.tagType === "grade"));
+                setSubjects(res.filter((x) => x.tagType === "subject"));
+                setTools(res.filter((x) => x.tagType === "tool"));
+            });
+
+            if (id) {
+                fetchArticle(id, localStorage.getItem("userId") ?? "").then(
+                    async (res) => {
+                        const form = formRef.current as any;
+
+                        form.title.value = res.title;
+                        form.description.value = res.description;
+
+                        setActiveTags(res.Tags.map((x) => x.id));
+
+                        const filesList = new DataTransfer();
+                        const thumbnailList = new DataTransfer();
+
+                        for (let file of res.Files) {
+                            const fileRes = await fetch(
+                                BASE_API_URL + "files/" + file.id
+                            );
+                            const fileBlob = await fileRes.blob();
+
+                            if (file.altText) {
+                                thumbnailList.items.add(
+                                    new File([fileBlob], file.name)
+                                );
+                            } else {
+                                filesList.items.add(
+                                    new File([fileBlob], file.name)
+                                );
+                            }
+                        }
+
+                        form.files.files = filesList.files;
+                        setFiles(filesList.files);
+                        form.image.files = thumbnailList.files;
+                        setThumbnail(thumbnailList.files);
+                    }
+                );
+            }
+
+            setLoaded(true);
+        }
+        fetchData();
+    }, [id, loaded]);
 
     return (
         <Container>
-            <Form>
+            <h1 className="my-3">Nytt undervisningsopplegg</h1>
+            <Form onSubmit={handleSubmit} ref={formRef}>
                 <Row>
-                    <Col>
-                        <Form.Group controlId="imageControl">
-                            <Form.Label>Last opp bilde :</Form.Label>
-                            <Form.Control type="file" />
+                    <Col md={6} className="mx-auto">
+                        <Form.Group controlId="title" className="mb-3">
+                            <Form.Label>Tittel</Form.Label>
+                            <Form.Control required />
                         </Form.Group>
 
-                        <Form.Group controlId="fileControl">
-                            <Form.Label>Last opp filer :</Form.Label>
+                        <Form.Group controlId="description" className="mb-3">
+                            <Form.Label>Beskrivelse</Form.Label>
+                            <Form.Control as="textarea" rows={3} required />
+                        </Form.Group>
+                        <Form.Group controlId="grades" className="mb-3">
+                            <Form.Label>Klassetrinn</Form.Label>
+                            <div className="tagList">
+                                {grades.map((tag) => (
+                                    <Form.Check
+                                        key={tag.id}
+                                        id={tag.id.toString()}
+                                        label={tag.name}
+                                        onChange={handleCheckboxChange}
+                                        checked={activeTags.includes(tag.id)}
+                                    />
+                                ))}
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group controlId="grades" className="mb-3">
+                            <Form.Label>Fag</Form.Label>
+                            <div className="tagList">
+                                {subjects.map((tag) => (
+                                    <Form.Check
+                                        key={tag.id}
+                                        id={tag.id.toString()}
+                                        label={tag.name}
+                                        onChange={handleCheckboxChange}
+                                        checked={activeTags.includes(tag.id)}
+                                    />
+                                ))}
+                            </div>
+                        </Form.Group>
+
+                        <Form.Group controlId="grades" className="mb-3">
+                            <Form.Label>Verktøy</Form.Label>
+                            <div className="tagList">
+                                {tools.map((tag) => (
+                                    <Form.Check
+                                        key={tag.id}
+                                        id={tag.id.toString()}
+                                        label={tag.name}
+                                        onChange={handleCheckboxChange}
+                                        checked={activeTags.includes(tag.id)}
+                                    />
+                                ))}
+                            </div>
+                        </Form.Group>
+                        <Form.Group controlId="image" className="mb-3">
+                            <Form.Label>Last opp thumbnail</Form.Label>
+                            <Form.Control
+                                type="file"
+                                onChange={(newFiles: any) => {
+                                    setThumbnail(newFiles.target.files);
+                                }}
+                            />
+                        </Form.Group>
+
+                        <Form.Group controlId="files" className="mb-3">
+                            <Form.Label>Last opp filer</Form.Label>
                             <Form.Control
                                 type="file"
                                 multiple
-                                onChange={(newFiles) => {
-                                    tempFiles = (
-                                        newFiles.currentTarget as HTMLInputElement
-                                    ).files;
-                                }}
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="toolsControl">
-                            <Form.Label>Verktøy som brukes :</Form.Label>
-                            <Form.Control as="textarea" rows={3} />
-                        </Form.Group>
-
-                        <Button
-                            variant="primary"
-                            onClick={async () => {
-                                let filesToUpload: globalThis.File[] = [];
-
-                                if (tempFiles) {
-                                    for (let i = 0; i < tempFiles.length; i++) {
-                                        filesToUpload.push(tempFiles[i]);
-                                    }
-                                }
-
-                                await newArticle(article, filesToUpload).then(
-                                    async (res) => {
-                                        console.log("new article status:", res);
-                                        if (res) {
-                                            window.location.href =
-                                                "/articlelist/myarticles";
-                                        }
-                                    }
-                                );
-                            }}
-                        >
-                            Lagre
-                        </Button>
-                        <Button
-                            variant="primary"
-                            onClick={() => window.history.back()}
-                        >
-                            Tilbake
-                        </Button>
-                    </Col>
-                    <Col>
-                        <Form.Group>
-                            <Form.Label>Oppgavetilttel</Form.Label>
-                            <Form.Control
-                                placeholder="Oppgavetittel"
-                                onChange={(evnet) => {
-                                    article.title = evnet.target.value;
-                                }}
-                            />
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Fagkode</Form.Label>
-                            <Form.Control placeholder="Fagkode" />
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Årstrinn</Form.Label>
-                            <Form.Control
-                                defaultValue={0}
-                                onChange={(event) => {
-                                    if (Number(event.target.value)) {
-                                        article.Tags.push({
-                                            id: Number(event.target.value),
-                                            name: "event.target.value",
-                                            tagType: "grade",
-                                        });
-                                    }
-                                }}
-                                as="select"
-                            >
-                                <option>1</option>
-                                <option>2</option>
-                                <option>3</option>
-                            </Form.Control>
-                        </Form.Group>
-
-                        <Form.Group>
-                            <Form.Label>Tema</Form.Label>
-                            <Form.Control
-                                style={{
-                                    border: "3px",
-                                    borderStyle: "solid",
-                                }}
-                                placeholder="Tema"
-                            />
-                        </Form.Group>
-
-                        <Form.Group controlId="exampleForm.ControlTextarea1">
-                            <Form.Label
-                                style={{
-                                    marginTop: "5%",
-                                    float: "left",
-                                }}
-                            >
-                                Beskrivelde :
-                            </Form.Label>
-                            <Form.Control
-                                style={{
-                                    marginTop: "7%",
-                                    border: "3px",
-                                    borderStyle: "solid",
-                                }}
-                                as="textarea"
-                                rows={3}
-                                onChange={(evnet) => {
-                                    article.description = evnet.target.value;
+                                onChange={(newFiles: any) => {
+                                    setFiles(newFiles.target.files);
                                 }}
                             />
                         </Form.Group>
                     </Col>
                 </Row>
+                <div className="mt-3">
+                    <Button
+                        className="mr-3"
+                        variant="secondary"
+                        onClick={() => window.history.back()}
+                    >
+                        Tilbake
+                    </Button>
+                    <Button type="submit">Lagre</Button>
+                </div>
             </Form>
         </Container>
     );
 };
 
 export default NewArticle;
-
-/*
-export default class NewArticle extends Component {
-    componentDidMount() {
-        if (!localStorage.getItem("userId")) {
-            window.location.href = "/login";
-        }
-    }
-
-    render() {
-        let article: Article = {
-            id: 0,
-            title: "",
-            authorId: localStorage.getItem("userId") || "",
-            description: "",
-            timeToComplete: 10,
-            Images: [],
-            Files: [],
-            Grades: [],
-            Subjects: [],
-            Tools: [],
-            Themes: [],
-            published: false,
-            viewCounter: 0,
-            createdAt: "",
-            updatedAt: "",
-        };
-        let image;
-        let tempFiles: any = [];
-        return (
-            <div>
-                <Container>
-                    <Form>
-                        <Row>
-                            <Col>
-                                <Form.Group>
-                                    <Form.Label style={{ float: "left" }}>
-                                        Last opp bilde :
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="file"
-                                        id="imageControl"
-                                        onChange={(newImage) => {
-                                            image = newImage.target.files[0];
-                                        }}
-                                    />
-                                </Form.Group>
-
-                                <Form.Group>
-                                    <Form.Label
-                                        style={{
-                                            marginTop: "25%",
-                                            float: "left",
-                                        }}
-                                    >
-                                        Last opp filer :
-                                    </Form.Label>
-                                    <Form.Control
-                                        type="file"
-                                        multiple
-                                        id="fileControl"
-                                        onChange={(newFiles) => {
-                                            tempFiles =
-                                                newFiles.currentTarget.files;
-                                        }}
-                                    />
-                                </Form.Group>
-
-                                <Form.Group controlId="exampleForm.ControlTextarea1">
-                                    <Form.Label
-                                        style={{
-                                            marginTop: "25%",
-                                            float: "left",
-                                        }}
-                                    >
-                                        Verktøy som brukes :
-                                    </Form.Label>
-                                    <Form.Control
-                                        style={{
-                                            marginTop: "7%",
-                                            border: "3px",
-                                            borderStyle: "solid",
-                                        }}
-                                        as="textarea"
-                                        rows={3}
-                                    />
-                                </Form.Group>
-
-                                <Button
-                                    style={{
-                                        marginTop: "7%",
-                                        marginRight: "15%",
-                                    }}
-                                    variant="primary"
-                                    onClick={async () => {
-                                        let filesToUpload: File[] = [];
-                                        for (
-                                            let i = 0;
-                                            i < tempFiles.length;
-                                            i++
-                                        ) {
-                                            filesToUpload.push(tempFiles[i]);
-                                            article.Files.push(tempFiles[i]);
-                                        }
-
-                                        if (image) {
-                                            article.Images.push({
-                                                altText: "",
-                                                fileId: image.name.toString(),
-                                            });
-                                            filesToUpload.push(image);
-                                        }
-                                        await newArticle(
-                                            article,
-                                            filesToUpload
-                                        ).then(async (res) => {
-                                            console.log(
-                                                "new article status:",
-                                                res
-                                            );
-                                            if (res) {
-                                                window.location.href =
-                                                    "/articlelist/myarticles";
-                                            }
-                                        });
-                                    }}
-                                >
-                                    Lagre
-                                </Button>
-                                <Button
-                                    style={{
-                                        marginTop: "7%",
-                                        marginLeft: "15%",
-                                    }}
-                                    variant="primary"
-                                >
-                                    Tilbake
-                                </Button>
-                            </Col>
-                            <Col>
-                                <Form.Label style={{ float: "left" }}>
-                                    Oppgavetilttel
-                                </Form.Label>
-                                <Form.Control
-                                    style={{
-                                        border: "3px",
-                                        borderStyle: "solid",
-                                    }}
-                                    placeholder="Oppgavetittel"
-                                    onChange={(evnet) => {
-                                        article.title = evnet.target.value;
-                                    }}
-                                />
-                                <Form.Label
-                                    style={{ marginTop: "5%", float: "left" }}
-                                >
-                                    Fagkode
-                                </Form.Label>
-                                <Form.Control
-                                    style={{
-                                        border: "3px",
-                                        borderStyle: "solid",
-                                    }}
-                                    placeholder="Fagkode"
-                                />
-                                <Form.Label
-                                    style={{ marginTop: "5%", float: "left" }}
-                                >
-                                    Årstrinn
-                                </Form.Label>
-                                <Form.Control
-                                    defaultValue={0}
-                                    onChange={(event) => {
-                                        article.Grades = [];
-                                        if (Number(event.target.value)) {
-                                            article.Grades.push({
-                                                id: Number(event.target.value),
-                                                name: "event.target.value",
-                                            });
-                                        }
-                                    }}
-                                    style={{
-                                        border: "3px",
-                                        borderStyle: "solid",
-                                    }}
-                                    as="select"
-                                >
-                                    <option>ingen årstrinn</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                    <option>6</option>
-                                    <option>7</option>
-                                    <option>8</option>
-                                    <option>9</option>
-                                    <option>10</option>
-                                    <option>11</option>
-                                    <option>12</option>
-                                    <option>13</option>
-                                </Form.Control>
-                                <Form.Label
-                                    style={{ marginTop: "5%", float: "left" }}
-                                >
-                                    Tema
-                                </Form.Label>
-                                <Form.Control
-                                    style={{
-                                        border: "3px",
-                                        borderStyle: "solid",
-                                    }}
-                                    placeholder="Tema"
-                                />
-                                <Form.Group controlId="exampleForm.ControlTextarea1">
-                                    <Form.Label
-                                        style={{
-                                            marginTop: "5%",
-                                            float: "left",
-                                        }}
-                                    >
-                                        Beskrivelde :
-                                    </Form.Label>
-                                    <Form.Control
-                                        style={{
-                                            marginTop: "7%",
-                                            border: "3px",
-                                            borderStyle: "solid",
-                                        }}
-                                        as="textarea"
-                                        rows={3}
-                                        onChange={(evnet) => {
-                                            article.description =
-                                                evnet.target.value;
-                                        }}
-                                    />
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                    </Form>
-                </Container>
-            </div>
-        );
-    }
-}
-
-*/

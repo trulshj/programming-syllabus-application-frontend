@@ -1,8 +1,8 @@
 import { Article } from "../types/Article";
-import { baseUrl } from "./baseApi";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
+import { BASE_API_URL } from "../lib/config";
 
-const articlesUrl = baseUrl + "articles";
+const articlesUrl = BASE_API_URL + "articles";
 
 export const fetchArticles = async () => {
     const data = await axios
@@ -30,7 +30,7 @@ export const searchArticles = async (searchString: string) => {
 };
 
 export const fetchArticlesByUser = async (userId: string) => {
-    const endpoint = `${baseUrl}users/${userId}/articles`;
+    const endpoint = `${BASE_API_URL}users/${userId}/articles`;
 
     let data = await axios
         .get<Article[]>(endpoint)
@@ -53,9 +53,36 @@ export const newArticle = async (article, files) => {
     return response?.status === 200;
 };
 
-export const fetchArticle = async (id, userId) => {
+export const createNewArticle = async (formData: FormData) => {
+    let data = await axios.post<FormData, AxiosResponse<Article>>(
+        articlesUrl,
+        formData,
+        {
+            headers: { "Content-Type": "multipart/form-data" },
+        }
+    );
+
+    return data?.status === 200 ? data.data : undefined;
+};
+
+export const updateArticle = async (articleId: string, formData: FormData) => {
+    let data = await axios.put<FormData, AxiosResponse<Article>>(
+        `${articlesUrl}/${articleId}`,
+        formData,
+        {
+            headers: { "Content-Type": "multipart/form-data" },
+        }
+    );
+
+    return data?.status === 200 ? data.data : undefined;
+};
+
+export const fetchArticle = async (
+    articleId: string,
+    userId: string
+): Promise<Article> => {
     let data: any = await axios
-        .get(articlesUrl + "/" + id, {
+        .get(articlesUrl + "/" + articleId, {
             headers: {
                 user_id: userId,
             },
