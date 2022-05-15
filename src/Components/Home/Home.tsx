@@ -1,8 +1,7 @@
 import React from "react";
 import "./Home.css";
 import { Link } from "react-router-dom";
-import { Button, Image } from "react-bootstrap";
-import ntnu from "../../ntnu.jpg";
+import { Button } from "react-bootstrap";
 
 type Props = {
     start: any;

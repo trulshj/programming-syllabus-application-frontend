@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import { updateLanguageServiceSourceFile } from "typescript";
 import { getUser, updateUser } from "../../api/userData.service";
 import { User } from "../../types/User";
 
