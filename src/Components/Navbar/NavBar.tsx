@@ -1,11 +1,19 @@
 import { useContext } from "react";
-import { Navbar, Nav, Form, FormControl, Button, Image } from "react-bootstrap";
+import {
+    Navbar,
+    Nav,
+    Form,
+    FormControl,
+    Button,
+    Image,
+    NavDropdown,
+} from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import "./NavBar.css";
 import { UserStatusContext } from "../../App";
 import { logout } from "../../api/userData.service";
 
-import ntnuLogo from "../../logo_ntnu.svg";
+import ntnuLogo from "./logo_ntnu.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
@@ -40,16 +48,32 @@ export default function NavBar() {
                 </Form>
                 <Nav className="ml-sm-5">
                     {userStatus[0] ? (
-                        <Nav.Link href="/user" className="font-weight-bold">
-                            {" "}
-                            Min bruker
-                        </Nav.Link>
+                        <NavDropdown
+                            className="font-weight-bold"
+                            title={
+                                localStorage.getItem("username")
+                                    ? localStorage.getItem("username")
+                                    : "Min bruker"
+                            }
+                        >
+                            <NavDropdown.Item href="/user/articles">
+                                Mine artikler
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="/articles/new">
+                                Lag en ny artikkel
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="/user/edit">
+                                Rediger bruker
+                            </NavDropdown.Item>
+                        </NavDropdown>
                     ) : null}
+
                     {userStatus[0] ? (
                         <Nav.Link onClick={logout} className="font-weight-bold">
                             Logg ut
                         </Nav.Link>
                     ) : null}
+
                     {userStatus[0] ? null : (
                         <Nav.Link
                             href="/registration"
@@ -58,6 +82,7 @@ export default function NavBar() {
                             Ny bruker
                         </Nav.Link>
                     )}
+
                     {userStatus[0] ? null : (
                         <Nav.Link href="/login" className="font-weight-bold">
                             Logg inn{" "}
