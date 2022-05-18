@@ -20,7 +20,11 @@ const Home: React.FC<Props> = ({ start }) => {
                         La deg inspirere av andres undervisningsopplegg
                     </div>
                     <Link to="/articles">
-                        <Button className="btn-primary" onClick={start}>
+                        <Button
+                            className="btn-primary"
+                            id="allArticlesBtn"
+                            onClick={start}
+                        >
                             Se alle opplegg
                         </Button>
                     </Link>

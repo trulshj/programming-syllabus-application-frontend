@@ -6,8 +6,10 @@
 
 ### 2. Start the development server with `npm run start`
 
-#### You can also create a development build using `npm run build`
+#### You can also create a production build using `npm run build`
 
 ## Testing
 
-### Use `npm run e2e` to run integration tests with cypress
+### Use `npm run test` to run integration tests with cypress
+
+#### For this you have to have a development server running in a different terminal

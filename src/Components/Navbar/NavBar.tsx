@@ -49,6 +49,7 @@ export default function NavBar() {
                 <Nav className="ml-sm-5">
                     {userStatus[0] ? (
                         <NavDropdown
+                            id="navUserDropdown"
                             className="font-weight-bold"
                             title={
                                 localStorage.getItem("username")
@@ -77,6 +78,7 @@ export default function NavBar() {
                     {userStatus[0] ? null : (
                         <Nav.Link
                             href="/registration"
+                            id="registrationBtn"
                             className="font-weight-bold"
                         >
                             Ny bruker
@@ -84,7 +86,11 @@ export default function NavBar() {
                     )}
 
                     {userStatus[0] ? null : (
-                        <Nav.Link href="/login" className="font-weight-bold">
+                        <Nav.Link
+                            href="/login"
+                            id="loginBtn"
+                            className="font-weight-bold"
+                        >
                             Logg inn{" "}
                         </Nav.Link>
                     )}

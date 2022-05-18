@@ -13,7 +13,7 @@ export default function ArticleCard({ article }: ArticleCardProps) {
     const thumbnail = article.Files.find((x) => x.altText);
 
     return (
-        <Card className="h-100">
+        <Card className="h-100" id={`articleCard${article.id}`}>
             {
                 <Card.Img
                     variant={"top"}
