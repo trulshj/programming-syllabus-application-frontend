@@ -1,8 +1,4 @@
-import {
-    mockArticle,
-    mockArticles,
-    mockArticleSearch,
-} from "../fixtures/articles";
+import { mockArticles, mockArticleSearch } from "../fixtures/articles";
 import { get } from "../fixtures/helper";
 import { mockTags } from "../fixtures/tags";
 
