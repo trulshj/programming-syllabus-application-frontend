@@ -139,7 +139,9 @@ const NewArticle = () => {
 
     return (
         <Container>
-            <h1 className="my-3">Nytt undervisningsopplegg</h1>
+            <h1 className="my-3">
+                {id ? "Rediger" : "Nytt"} undervisningsopplegg
+            </h1>
             <Form onSubmit={handleSubmit} ref={formRef}>
                 <Row>
                     <Col md={6} className="mx-auto">

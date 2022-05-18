@@ -28,8 +28,10 @@ export default function ArticleTags({ tags }: ArticleTagsProps) {
                     &nbsp;
                     {tags
                         .filter((x) => x.tagType === "subject")
-                        .map((tag) => (
-                            <span key={tag.id}>{tag.name}</span>
+                        .map((tag, idx) => (
+                            <span key={tag.id}>
+                                {(idx > 0 ? ", " : "") + tag.name}
+                            </span>
                         ))}
                 </div>
             )}
@@ -40,8 +42,10 @@ export default function ArticleTags({ tags }: ArticleTagsProps) {
                     &nbsp;
                     {tags
                         .filter((x) => x.tagType === "theme")
-                        .map((tag) => (
-                            <span key={tag.id}>{tag.name}</span>
+                        .map((tag, idx) => (
+                            <span key={tag.id}>
+                                {(idx > 0 ? ", " : "") + tag.name}
+                            </span>
                         ))}
                 </div>
             )}
@@ -52,8 +56,10 @@ export default function ArticleTags({ tags }: ArticleTagsProps) {
                     &nbsp;
                     {tags
                         .filter((x) => x.tagType === "tool")
-                        .map((tag) => (
-                            <span key={tag.id}>{tag.name}</span>
+                        .map((tag, idx) => (
+                            <span key={tag.id}>
+                                {(idx > 0 ? ", " : "") + tag.name}
+                            </span>
                         ))}
                 </div>
             )}
